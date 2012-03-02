@@ -18,7 +18,6 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
-import de.schlichtherle.io.FileInputStream;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
@@ -68,7 +67,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public void setHttpResponse(HttpServletResponse resp) {
-		response = resp;
+		this.response = resp;
 	}
 
 	@Override
@@ -78,7 +77,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 	@Override
 	public CommandResponse validate() {
 
-		if (!parameterMap.containsKey("processId")) {
+		if (!this.parameterMap.containsKey("processId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' defined";
 			return new CommandResponse(title, message);
@@ -90,7 +89,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 	@Override
 	public CommandResponse execute() {
 
-		Integer processId = Integer.parseInt(parameterMap.get("processId"));
+		Integer processId = Integer.parseInt(this.parameterMap.get("processId"));
 
 		InputStream in = null;
 		try {
@@ -122,11 +121,12 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 			// output data
 			String fileName = "ucc_data_" + processId + ".zip";
 
-			response.setContentType("application/zip");
-			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-			OutputStream out = response.getOutputStream();
+			this.response.setContentType("application/zip");
+			this.response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+			OutputStream out = this.response.getOutputStream();
 
-			in = new FileInputStream(backup);
+			
+			in = new java.io.FileInputStream(backup);
 			int numRead;
 			byte[] buf = new byte[4096];
 			while ((numRead = in.read(buf)) >= 0) {
