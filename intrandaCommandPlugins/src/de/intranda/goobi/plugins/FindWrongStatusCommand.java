@@ -120,6 +120,9 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 			}
 		}
 		try {
+			if (answer.endsWith(",")) {
+				answer = answer.substring(0, answer.length()-1);
+			}
 			OutputStream out = this.response.getOutputStream();
 			out.write(answer.getBytes());
 			out.flush();
