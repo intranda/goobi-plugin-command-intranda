@@ -74,18 +74,32 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 			String message = "No parameter 'processId' defined.";
 			return new CommandResponse(title, message);
 		}
+		if (!parameterMap.containsKey("images")){
+			String title = "Missing parameter";
+			String message = "No parameter 'images' defined.";
+			return new CommandResponse(title, message);
+		}
+		if (!parameterMap.containsKey("ocr")){
+			String title = "Missing parameter";
+			String message = "No parameter 'ocr' defined.";
+			return new CommandResponse(title, message);
+		}
 		return null;
 	}
 	
 	@Override
 	public CommandResponse execute() {
 		Integer id = Integer.parseInt(parameterMap.get("processId"));
+		boolean images = Boolean.parseBoolean(parameterMap.get("images"));
+		boolean ocr = Boolean.parseBoolean(parameterMap.get("ocr"));
 		
 		try {
 			ProzessDAO dao = new ProzessDAO();
 			Prozess p = dao.get(id);
-			ExportDms export = new ExportDms();
+			ExportDms export = new ExportDms(images);
+			export.setExportFulltext(ocr);
 			export.startExport(p);
+			
 		} catch (Exception e) {
 			logger.error(e);
 			String title = "Error during execution";
