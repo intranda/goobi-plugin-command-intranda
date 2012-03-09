@@ -99,7 +99,6 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 			ExportDms export = new ExportDms(images);
 			export.setExportFulltext(ocr);
 			export.startExport(p);
-			
 		} catch (Exception e) {
 			logger.error(e);
 			String title = "Error during execution";
