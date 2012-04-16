@@ -26,11 +26,11 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.Prozess;
 
 @PluginImplementation
-public class IdFilterCommand implements ICommandPlugin, IPlugin {
+public class ProcessFilterCommand implements ICommandPlugin, IPlugin {
 
-	private static final Logger logger = Logger.getLogger(IdFilterCommand.class);
-	private static final String ID = "idFilter";
-	private static final String NAME = "IdFilter Command Plugin";
+	private static final Logger logger = Logger.getLogger(ProcessFilterCommand.class);
+	private static final String ID = "processFilter";
+	private static final String NAME = "Process Filter Command Plugin";
 	private HttpServletResponse response;
 	private HashMap<String, String> parameterMap;
 
