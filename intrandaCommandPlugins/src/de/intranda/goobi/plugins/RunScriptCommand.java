@@ -72,7 +72,9 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		String stepId = this.parameterMap.get("stepId");
 		String scriptname = this.parameterMap.get("scriptname");
 		try {
-			Schritt step = new SchrittDAO().get(Integer.getInteger(stepId));
+			int id = Integer.parseInt(stepId);
+			
+			Schritt step = new SchrittDAO().get(id);
 			HelperSchritte hs = new HelperSchritte();
 
 			if (scriptname != null && scriptname.length() > 0) {
