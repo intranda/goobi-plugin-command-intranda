@@ -13,12 +13,9 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.helper.HelperSchritte;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 
 @PluginImplementation
@@ -49,8 +46,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return getTitle();
 	}
 
 	@Override
@@ -72,7 +68,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse validate() {
-		if (!parameterMap.containsKey("stepId")){
+		if (!this.parameterMap.containsKey("stepId")){
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
 			return new CommandResponse(title, message);
@@ -82,24 +78,10 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	
 	@Override
 	public CommandResponse execute() {
-		Integer id = Integer.parseInt(parameterMap.get("stepId"));
-		
-		try {
-		SchrittDAO dao = new SchrittDAO();
-		Schritt step = dao.get(id);
+		Integer id = Integer.parseInt(this.parameterMap.get("stepId"));
+		StepObject so = StepManager.getStepById(id);
 		HelperSchritte hs = new HelperSchritte();
-		step.setEditTypeEnum(StepEditType.AUTOMATIC);
-		step.setBearbeitungsstatusEnum(StepStatus.DONE);
-		dao.save(step);
-		hs.SchrittAbschliessen(step, true);
-
-		} catch (DAOException e) {
-			logger.error(e);
-			String title = "Error during execution";
-			String message = "An error occured: " + e.getMessage();
-			return new CommandResponse(title, message);
-		}
-		
+		hs.CloseStepObjectAutomatic(so);	
 		String title = "Command executed";
 		String message = "Step closed";
 		return new CommandResponse(title, message);

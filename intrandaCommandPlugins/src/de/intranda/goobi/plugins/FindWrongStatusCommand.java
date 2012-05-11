@@ -15,9 +15,9 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 
 import de.sub.goobi.helper.Helper;
 
@@ -75,8 +75,8 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 		Session session = Helper.getHibernateSession();
 
 		SQLQuery query = session.createSQLQuery(queryString);
-		query.addScalar("status", Hibernate.INTEGER);
-		query.addScalar("id", Hibernate.INTEGER);
+		query.addScalar("status", StandardBasicTypes.INTEGER);
+		query.addScalar("id", StandardBasicTypes.INTEGER);
 		List list = query.list();
 		// List<Integer> bla = new ArrayList<Integer>();
 		HashMap<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();

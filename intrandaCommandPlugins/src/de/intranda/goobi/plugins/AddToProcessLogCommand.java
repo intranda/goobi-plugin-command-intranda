@@ -16,10 +16,10 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
-import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.Persistence.apache.ProcessManager;
+import de.sub.goobi.Persistence.apache.ProcessObject;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 
 @PluginImplementation
 public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
@@ -105,28 +105,26 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 			logger.warn("cannot encode " + value);
 		}
 		String type = this.parameterMap.get("type");
-		Prozess process = null;
+		ProcessObject process = null;
 		Integer id = null;
+		int processId = 0;
 
-		try {
-			if (this.parameterMap.containsKey("stepId")) {
-				id = Integer.parseInt(this.parameterMap.get("stepId"));
-				process = new SchrittDAO().get(id).getProzess();
-			} else {
-				id = Integer.parseInt(this.parameterMap.get("processId"));
-				process = new ProzessDAO().get(id);
+		if (this.parameterMap.containsKey("stepId")) {
+			id = Integer.parseInt(this.parameterMap.get("stepId"));
+			StepObject so = StepManager.getStepById(id);
+			if (so == null) {
+				String title = "Error during execution";
+				String message = "Could not load step with id: " + id;
+				return new CommandResponse(title, message);
 			}
-
-			if (process != null) {
-				process.setWikifield(WikiFieldHelper.getWikiMessage(process.getWikifield(), type, value));
-				new ProzessDAO().save(process);
-			}
-		} catch (DAOException e) {
-			logger.error(e);
-			String title = "Error during execution";
-			String message = "An error occured: " + e.getMessage();
-			return new CommandResponse(title, message);
+			processId = so.getProcessId();
+		} else {
+			processId = Integer.parseInt(this.parameterMap.get("processId"));
 		}
+		process = ProcessManager.getProcessObjectForId(processId);
+
+		String logMessage = WikiFieldHelper.getWikiMessage(process.getWikifield(), type, value);
+		ProcessManager.addLogfile(logMessage, process.getId());
 
 		String title = "Command executed";
 		String message = "Message to process log added";
