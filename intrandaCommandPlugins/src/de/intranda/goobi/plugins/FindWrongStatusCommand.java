@@ -19,6 +19,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
+import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.Helper;
 
 @PluginImplementation
@@ -73,7 +74,10 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 		String queryString = "select distinct(Bearbeitungsstatus) as status, ProzesseID as id from schritte order by ProzesseID, Reihenfolge;";
 		Session session = Helper.getHibernateSession();
-
+		if (session == null || !session.isOpen() || !session.isConnected()) {
+			HibernateUtilOld.rebuildSessionFactory();
+			session=Helper.getHibernateSession();
+		}
 		SQLQuery query = session.createSQLQuery(queryString);
 		query.addScalar("status", StandardBasicTypes.INTEGER);
 		query.addScalar("id", StandardBasicTypes.INTEGER);
