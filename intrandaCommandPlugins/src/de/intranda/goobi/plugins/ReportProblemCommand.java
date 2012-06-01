@@ -19,13 +19,13 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
@@ -122,7 +122,11 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 			Schritt source = dao.get(sourceid);
 			source.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 			source.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-			HelperSchritte.updateEditing(source);
+			source.setBearbeitungszeitpunkt(new Date());
+			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			if (ben != null) {
+				source.setBearbeitungsbenutzer(ben);
+			}
 			source.setBearbeitungsbeginn(null);
 			Schritt temp = null;
 			for (Schritt s : source.getProzess().getSchritteList()) {

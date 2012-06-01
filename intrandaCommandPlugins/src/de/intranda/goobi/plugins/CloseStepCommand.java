@@ -15,7 +15,7 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
-import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 
 
 @PluginImplementation
@@ -79,8 +79,10 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	@Override
 	public CommandResponse execute() {
 		Integer id = Integer.parseInt(this.parameterMap.get("stepId"));
+		logger.debug("closing step with id " + id);
 		StepObject so = StepManager.getStepById(id);
-		HelperSchritte hs = new HelperSchritte();
+		logger.debug("loaded StepObject with id " + so.getId());
+		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 		hs.CloseStepObjectAutomatic(so);	
 		String title = "Command executed";
 		String message = "Step closed";

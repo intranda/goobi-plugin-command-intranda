@@ -3,6 +3,7 @@ package de.intranda.goobi.plugins;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +19,10 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.Persistence.apache.StepManager;
+import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
@@ -73,15 +76,16 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		String scriptname = this.parameterMap.get("scriptname");
 		try {
 			int id = Integer.parseInt(stepId);
-			
-			Schritt step = new SchrittDAO().get(id);
-			HelperSchritte hs = new HelperSchritte();
+			StepObject step = StepManager.getStepById(id);
+//			Schritt step = new SchrittDAO().get(id);
+			HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 
 			if (scriptname != null && scriptname.length() > 0) {
-				if (step.getAllScripts().containsKey(scriptname)) {
-					String script = step.getAllScripts().get(scriptname);
+				Map<String,String> scripts = StepManager.loadScriptMap(id);
+				if (scripts.containsKey(scriptname)) {
+					String script = scripts.get(scriptname);
 					
-						hs.executeScript(step, script, false);
+						hs.executeScriptForStepObject(step, script, false);
 					
 				} else {
 					String title = "Error during execution";
@@ -89,7 +93,8 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 					return new CommandResponse(title, message);
 				}
 			} else {
-				hs.executeAllScripts(step, false);
+				
+				hs.executeAllScriptsForStep(step, false);
 			}
 			String answer = "finished script";
 			OutputStream out = this.response.getOutputStream();
@@ -127,42 +132,33 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 	public void setHttpRequest(HttpServletRequest resp) {
 	}
 
-	//
-	// if (this.myParameters.get("action").equals("runscript")) {
-	// String stepname = this.myParameters.get("stepname");
-	// String scriptname = this.myParameters.get("script");
-	// if (stepname == null) {
-	// Helper.setFehlerMeldung("missing parameter");
-	// } else {
-	// runScript(inProzesse, stepname, scriptname);
-	// }
 
-	private void runScript(List<Prozess> inProzesse, String stepname, String scriptname) {
-		HelperSchritte hs = new HelperSchritte();
-		for (Prozess p : inProzesse) {
-			for (Schritt step : p.getSchritteList()) {
-				if (step.getTitel().equalsIgnoreCase(stepname)) {
-					if (scriptname != null) {
-						if (step.getAllScripts().containsKey(scriptname)) {
-							String path = step.getAllScripts().get(scriptname);
-							try {
-								hs.executeScript(step, path, false);
-							} catch (SwapException e) {
-								Helper.setFehlerMeldung("Error while running script " + path, e);
-							}
-						}
-					} else {
-						try {
-							hs.executeAllScripts(step, false);
-						} catch (SwapException e) {
-							Helper.setFehlerMeldung("Error while running scripts", e);
-						} catch (DAOException e) {
-							Helper.setFehlerMeldung("Error while running scripts", e);
-						}
-					}
-				}
-			}
-		}
-
-	}
+//	private void runScript(List<Prozess> inProzesse, String stepname, String scriptname) {
+//		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+//		for (Prozess p : inProzesse) {
+//			for (Schritt step : p.getSchritteList()) {
+//				if (step.getTitel().equalsIgnoreCase(stepname)) {
+//					if (scriptname != null) {
+//						if (step.getAllScripts().containsKey(scriptname)) {
+//							String path = step.getAllScripts().get(scriptname);
+//							try {
+//								hs.executeScript(step, path, false);
+//							} catch (SwapException e) {
+//								Helper.setFehlerMeldung("Error while running script " + path, e);
+//							}
+//						}
+//					} else {
+//						try {
+//							hs.executeAllScriptsForStep(step, false);
+//						} catch (SwapException e) {
+//							Helper.setFehlerMeldung("Error while running scripts", e);
+//						} catch (DAOException e) {
+//							Helper.setFehlerMeldung("Error while running scripts", e);
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//	}
 }
