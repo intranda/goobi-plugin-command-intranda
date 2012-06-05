@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 public class Archiver extends Thread {
 
 	private static final Logger logger = Logger.getLogger(Archiver.class);
+	private static String backup_already_exists_error = "Zu diesem Vorgang existiert bereits ein Backup in diesem Pfad. Wenn Sie weitere Backups ausführen möchten, wenden Sie sich bitte an ihren Goobi-Administrator; oder aktivieren Sie die Option zur Verwendung datierter Archivordner.";
 
 	private File configFile;
 	private File destFolder;
@@ -137,6 +138,24 @@ public class Archiver extends Thread {
 			logger.error("Unable to locate necesary system resources. Aborting");
 			close();
 		}
+		
+		// creating backup file and checking if one already exists
+		File destFile = null;
+		File tarFile = new File(tempFolder, goobiProcessTitle + "_" + goobiMetadataFolder.getName() + ".tar");
+		if (useDateFolders) {
+			String dateString = ArchivingUtils.getCurrentDateString(false);
+			dateString = dateString.replaceAll("\\D", "");
+			destFile = new File(destFolder, dateString + File.separator + tarFile.getName());
+			destFile.getParentFile().mkdir();
+		} else {
+			destFile = new File(destFolder, tarFile.getName());
+		}
+		if (destFile.isFile() && destFile.length() > 0) {
+			// backup already exists
+			logger.error("File " + destFile.getAbsolutePath() + " already exists. Terminating archiving.");
+			System.err.println(backup_already_exists_error);
+			close(false);
+		}
 
 		// get masterTiffs
 		logger.debug("Getting list of mastertiffs");
@@ -213,7 +232,6 @@ public class Archiver extends Thread {
 
 		// ////////Creating archive
 		logger.info("Creating tar-archive");
-		File tarFile = new File(tempFolder, goobiProcessTitle + "_" + goobiMetadataFolder.getName() + ".tar");
 		byte[] origArchiveChecksum = null;
 		try {
 			origArchiveChecksum = TarUtils.tarFiles(filenameMap, tarFile);
@@ -247,14 +265,14 @@ public class Archiver extends Thread {
 		// ////////copying archive file and validating copy
 		logger.info("Copying tar archive to archive");
 		try {
-			if (useDateFolders) {
-				String dateString = ArchivingUtils.getCurrentDateString(false);
-				dateString = dateString.replaceAll("\\D", "");
-				destFile = new File(destFolder, dateString + File.separator + tarFile.getName());
-				destFile.getParentFile().mkdir();
-			} else {
-				destFile = new File(destFolder, tarFile.getName());
-			}
+//			if (useDateFolders) {
+//				String dateString = ArchivingUtils.getCurrentDateString(false);
+//				dateString = dateString.replaceAll("\\D", "");
+//				destFile = new File(destFolder, dateString + File.separator + tarFile.getName());
+//				destFile.getParentFile().mkdir();
+//			} else {
+//				destFile = new File(destFolder, tarFile.getName());
+//			}
 			ArchivingUtils.copyFile(tarFile, destFile);
 
 			// validation
@@ -317,8 +335,14 @@ public class Archiver extends Thread {
 	}
 
 	private void close() {
+		close(true);
+	}
+	
+	private void close(boolean error) {
 
-		System.err.println("Error archiving directory " + goobiMetadataFolder + ". See log for details");
+		if(error) {			
+			System.err.println("Error archiving directory " + goobiMetadataFolder + ". See log for details");
+		}
 
 		if (exportedMetsFolder != null && exportedMetsFolder.isDirectory()) {
 			ArchivingUtils.deleteAllFiles(exportedMetsFolder);
@@ -327,6 +351,7 @@ public class Archiver extends Thread {
 			ArchivingUtils.deleteAllFiles(tempFolder);
 		}
 		interrupt();
+		
 
 	}
 

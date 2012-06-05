@@ -18,6 +18,8 @@ import java.util.GregorianCalendar;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -278,6 +280,28 @@ public class ArchivingUtils {
 			String docString = outputter.outputString(document);
 
 			return docString;
+		}
+		
+		/**
+		 * Load a jDOM document from an xml file
+		 * 
+		 * @param file
+		 * @return
+		 */
+		public static Document getDocumentFromFile(File file) {
+			SAXBuilder builder = new SAXBuilder(false);
+			Document document = null;
+
+			try {
+				document = builder.build(file);
+			} catch (JDOMException e) {
+				logger.error(e.toString(), e);
+				return null;
+			} catch (IOException e) {
+				logger.error(e.toString(), e);
+				return null;
+			}
+			return document;
 		}
 	
 }
