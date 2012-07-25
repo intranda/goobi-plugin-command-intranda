@@ -72,16 +72,19 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 		if (!parameterMap.containsKey("processId")){
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		if (!parameterMap.containsKey("images")){
 			String title = "Missing parameter";
 			String message = "No parameter 'images' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		if (!parameterMap.containsKey("ocr")){
 			String title = "Missing parameter";
 			String message = "No parameter 'ocr' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		return null;
@@ -103,11 +106,13 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 			logger.error(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
+//			return new CommandResponse(500,title, message);
 			return new CommandResponse(title, message);
 		}
 		
 		String title = "Command executed";
 		String message = "Process exported to DMS";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 	
@@ -115,6 +120,7 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 	

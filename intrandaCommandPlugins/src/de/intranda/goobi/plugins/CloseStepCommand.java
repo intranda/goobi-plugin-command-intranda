@@ -71,6 +71,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")){
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		return null;
@@ -86,6 +87,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		hs.CloseStepObjectAutomatic(so);	
 		String title = "Command executed";
 		String message = "Step closed";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 	
@@ -93,6 +95,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 	

@@ -83,22 +83,30 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 		if (!parameterMap.containsKey("userGroupId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'userGroupId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
+
 		}
 		if (!parameterMap.containsKey("projectId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'projectId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
+
 		}
 		if (!parameterMap.containsKey("stepdata")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepdata' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
+
 		}
 		if (!parameterMap.containsKey("orderNumber")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'orderNumber' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
+
 		}
 
 		return null;
@@ -283,12 +291,16 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 			logger.error(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
+//			return new CommandResponse(500,title, message);
 			return new CommandResponse(title, message);
+
 		}
 
 		String title = "Command executed";
 		String message = "Step closed";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
+
 	}
 
 	private HashMap<String, String> generateMap(String param) {
@@ -305,7 +317,9 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
+
 	}
 
 }

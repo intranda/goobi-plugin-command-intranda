@@ -65,6 +65,7 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		return null;
@@ -90,6 +91,7 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 				} else {
 					String title = "Error during execution";
 					String message = "script " + scriptname + " does not exist";
+//					return new CommandResponse(500,title, message);
 					return new CommandResponse(title, message);
 				}
 			} else {
@@ -104,10 +106,12 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 			logger.info(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
+//			return new CommandResponse(500,title, message);
 			return new CommandResponse(title, message);
 		}
 		String title = "Command executed";
 		String message = "";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 
@@ -115,6 +119,7 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 

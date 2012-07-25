@@ -79,6 +79,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		if (!parameterMap.containsKey("processId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' defined.";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 		return null;
@@ -105,6 +106,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 				logger.error("Unable to locate config file. Aborting");
 				String title = "Missing resources";
 				String message = "Unable to locate config file";
+//				return new CommandResponse(500,title, message);
 				return new CommandResponse(title, message);
 			}
 		}
@@ -122,6 +124,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 			logger.error("Unable to find process");
 			String title = "Process Error";
 			String message = "Unable to find process";
+//			return new CommandResponse(500,title, message);
 			return new CommandResponse(title, message);
 		} 
 			
@@ -137,6 +140,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 			logger.error("Unable to create exported Mets");
 			String title = "Process Error";
 			String message = "Unable to create exported Mets";
+//			return new CommandResponse(500,title, message);
 			return new CommandResponse(title, message);
 		} 
 		
@@ -153,6 +157,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		
 		String title = "Done Archiving";
 		String message = "Archive created: " + archiver.getArchive();
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 
@@ -161,6 +166,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		String title = "Command help";
 		String message = "Syntax: \"command=archiveProcess\"; \"processId=[The processId of the Goobi process to be archived]\".";
 		message = message.concat("\nThis plugin requires the file \"archiving.properties\" in the goobi/config folder. There, additional parameters such as destination path can be adjusted.");
+//		return new CommandResponse(200,title, message);
 		return new CommandResponse(title, message);
 	}
 

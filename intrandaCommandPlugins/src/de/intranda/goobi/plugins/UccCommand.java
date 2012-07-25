@@ -80,6 +80,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("processId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' defined";
+//			return new CommandResponse(400,title, message);
 			return new CommandResponse(title, message);
 		}
 
@@ -139,6 +140,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 		}
 		String title = "Command executed";
 		String message = "UCC download started";
+//		return new CommandResponse(200, title, message);
 		return new CommandResponse(title, message);
 	}
 
@@ -146,6 +148,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
+//		return new CommandResponse(200, title, message);
 		return new CommandResponse(title, message);
 	}
 }
