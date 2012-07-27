@@ -40,7 +40,7 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME + " v" + VERSION;
+		return NAME;
 	}
 
 	@Override

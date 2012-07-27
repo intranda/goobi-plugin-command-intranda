@@ -42,7 +42,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME + " v" + VERSION;
+		return NAME;
 	}
 
 	@Override
@@ -109,6 +109,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			wmi.setImportFolder(tempfolder);
 			wmi.setPrefs(prefs);
+			recordList = wmi.generateRecordsFromFilenames(filenameList);
 			answer = wmi.generateFiles(recordList);
 
 			if (answer != null && answer.size() > 0) {
@@ -125,6 +126,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 					String message = "import failed for " + io.getProcessTitle() + ", process generation failed";
 					return new CommandResponse(title, message);
 				} else {
+					wmi.deleteFiles(filenameList);
 					String title = "Command executed";
 					String message = ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle();
 					return new CommandResponse(title, message);
