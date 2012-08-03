@@ -98,8 +98,8 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 
 			String filename = parameterMap.get("filename");
 
-//			IImportPlugin wmi = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, "IntrandaGoobiImport");
-			IImportPlugin wmi = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, "IntrandaGoobiImport");
+			IImportPlugin wmi = (IImportPlugin) PluginLoader.getPluginById(PluginType.Import, "goobiImport");
+//			IImportPlugin wmi = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, "IntrandaGoobiImport");
 
 			List<String> filenameList = new ArrayList<String>();
 			filenameList.add(filename);
