@@ -48,6 +48,9 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 	
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	public String getDescription() {

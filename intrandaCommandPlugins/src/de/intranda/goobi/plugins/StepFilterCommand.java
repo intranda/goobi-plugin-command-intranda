@@ -37,6 +37,9 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	public PluginType getType() {

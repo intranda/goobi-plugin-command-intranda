@@ -54,6 +54,10 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 	public String getDescription() {
 		return NAME;
 	}
+	
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	public void setParameterMap(HashMap<String, String> parameterMap) {

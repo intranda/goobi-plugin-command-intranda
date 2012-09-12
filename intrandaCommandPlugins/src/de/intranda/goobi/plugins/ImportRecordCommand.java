@@ -47,6 +47,10 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 	public String getTitle() {
 		return ID;
 	}
+	
+	public String getId() {
+		return ID;
+	}
 
 	@Override
 	public String getDescription() {

@@ -48,10 +48,13 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
+	public String getId() {
+		return ID;
+	}
+	
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return ID;
 	}
 
 	@Override
@@ -321,5 +324,4 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 //		return new CommandResponse(title, message);
 
 	}
-
 }
