@@ -27,8 +27,8 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 	private static final Logger logger = Logger.getLogger(AddToProcessLogCommand.class);
 
 	private static final String ID = "addToProcessLog";
-	private static final String NAME = "AddToProcessLog Command Plugin";
-	private static final String VERSION = "1.0.20111108";
+//	private static final String NAME = "AddToProcessLog Command Plugin";
+//	private static final String VERSION = "1.0.20111108";
 
 	private HashMap<String, String> parameterMap;
 
@@ -39,18 +39,13 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
 
+
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return ID;
 	}
 
 	@Override
@@ -77,22 +72,22 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("processId") && !this.parameterMap.containsKey("stepId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' and 'stepId' defined. One of these is required.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 
 		if (!this.parameterMap.containsKey("value")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'value' defined";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 
 		if (!this.parameterMap.containsKey("type")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'type' defined. Possible values are: user, error, warn, info, debug";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 
 		return null;
@@ -118,8 +113,8 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 			if (so == null) {
 				String title = "Error during execution";
 				String message = "Could not load step with id: " + id;
-//				return new CommandResponse(500,title, message);
-				return new CommandResponse(title, message);
+				return new CommandResponse(500,title, message);
+//				return new CommandResponse(title, message);
 			}
 			processId = so.getProcessId();
 		} else {
@@ -132,8 +127,8 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 
 		String title = "Command executed";
 		String message = "Message to process log added";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override

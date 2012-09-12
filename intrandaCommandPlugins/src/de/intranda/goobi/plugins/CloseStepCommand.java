@@ -24,8 +24,8 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	private static final Logger logger = Logger.getLogger(CloseStepCommand.class);
 
 	private static final String ID = "closeStep";
-	private static final String NAME = "CloseStep Command Plugin";
-	private static final String VERSION = "1.0.20111109";
+//	private static final String NAME = "CloseStep Command Plugin";
+//	private static final String VERSION = "1.0.20111109";
 
 	private HashMap<String, String> parameterMap;
 
@@ -36,13 +36,9 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
+
 	
 	@Override
 	public String getDescription() {
@@ -71,8 +67,8 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")){
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 		return null;
 	}
@@ -87,16 +83,16 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		hs.CloseStepObjectAutomatic(so);	
 		String title = "Command executed";
 		String message = "Step closed";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 	
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 	
 }

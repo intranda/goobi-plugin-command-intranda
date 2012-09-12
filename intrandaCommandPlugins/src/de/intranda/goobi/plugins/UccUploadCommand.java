@@ -1,7 +1,9 @@
 package de.intranda.goobi.plugins;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +16,14 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.hibernate.Session;
 
+import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.schlichtherle.io.File;
 import de.schlichtherle.io.FileOutputStream;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.HibernateUtilOld;
+//import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 
 @PluginImplementation
@@ -27,11 +32,11 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 	private static final Logger logger = Logger.getLogger(UccUploadCommand.class);
 
 	private static final String ID = "ucc_upload";
-	private static final String NAME = "UCC Upload Command Plugin";
-	private static final String VERSION = "1.0.20111109";
+	// private static final String NAME = "UCC Upload Command Plugin";
+	// private static final String VERSION = "1.0.20111109";
 
 	private HashMap<String, String> parameterMap;
-	private HttpServletResponse response;
+//	private HttpServletResponse response;
 	private HttpServletRequest request;
 
 	@Override
@@ -41,18 +46,12 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return ID;
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public void setHttpResponse(HttpServletResponse resp) {
-		response = resp;
+//		response = resp;
 	}
 
 	@Override
@@ -81,8 +80,8 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 		if (!parameterMap.containsKey("processId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'processId' defined";
-//			return new CommandResponse(400, title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400, title, message);
+			// return new CommandResponse(title, message);
 		}
 
 		return null;
@@ -92,10 +91,16 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 
 		Integer processId = Integer.parseInt(parameterMap.get("processId"));
+		Session session = HibernateUtilOld.getSessionFactory().openSession();
+		if (!session.isOpen() || !session.isConnected()) {
+			Connection con = ConnectionHelper.getConnection();
+			session.reconnect(con);
+		}
+		File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
+		OutputStream out = null;
 		try {
+			out = new FileOutputStream(archive);
 			InputStream in = request.getInputStream();
-			File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
-			OutputStream out = new FileOutputStream(archive);
 			int numRead;
 			byte[] buf = new byte[4096];
 			while ((numRead = in.read(buf)) >= 0) {
@@ -103,7 +108,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			}
 			out.flush();
 
-			Prozess process = new ProzessDAO().get(processId);
+			Prozess process = (Prozess) session.get(Prozess.class, processId);
 			File metaDest = new File(process.getMetadataFilePath());
 			File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
@@ -118,21 +123,30 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			logger.error(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
-//			return new CommandResponse(500, title, message);
-			return new CommandResponse(title, message);
+			 return new CommandResponse(500, title, message);
+//			return new CommandResponse(title, message);
+		} finally {
+			session.close();
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
 		}
 
 		String title = "Command executed";
 		String message = "Message to process log added";
-//		return new CommandResponse(200, title, message);
-		return new CommandResponse(title, message);
+		 return new CommandResponse(200, title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200, title, message);
+		// return new CommandResponse(200, title, message);
 		return new CommandResponse(title, message);
 	}
 }

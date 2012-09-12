@@ -14,7 +14,7 @@
 	 ================================= -->
 	<target name="jar">
 		<echo>compile sources</echo>
-		<javac destdir="bin">
+		<javac destdir="bin" source="1.5" target="1.5">
 			<src path="src" />
 		</javac>
 		<echo>generate jar file</echo>

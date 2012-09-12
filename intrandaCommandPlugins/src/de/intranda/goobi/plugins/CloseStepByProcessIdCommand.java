@@ -21,7 +21,6 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 
 import de.sub.goobi.Metadaten.MetadatenImagesHelper;
-import de.sub.goobi.Metadaten.MetadatenVerifizierung;
 import de.sub.goobi.Metadaten.MetadatenVerifizierungWithoutHibernate;
 import de.sub.goobi.Persistence.apache.FolderInformation;
 import de.sub.goobi.Persistence.apache.ProcessManager;
@@ -29,7 +28,6 @@ import de.sub.goobi.Persistence.apache.ProcessObject;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 
 @PluginImplementation
@@ -38,8 +36,8 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 	private static final Logger logger = Logger.getLogger(CloseStepByProcessIdCommand.class);
 
 	private static final String ID = "closeStepByProcessId";
-	private static final String NAME = "CloseStepByProcessId Command Plugin";
-	private static final String VERSION = "1.0.20111109";
+//	private static final String NAME = "CloseStepByProcessId Command Plugin";
+//	private static final String VERSION = "1.0.20111109";
 
 	private HashMap<String, String> parameterMap;
 
@@ -50,13 +48,9 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
+
 
 	@Override
 	public String getDescription() {

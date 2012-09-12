@@ -232,6 +232,7 @@ public class Archiver extends Thread {
 
 		// ////////Creating archive
 		logger.info("Creating tar-archive");
+		@SuppressWarnings("unused")
 		byte[] origArchiveChecksum = null;
 		try {
 			origArchiveChecksum = TarUtils.tarFiles(filenameMap, tarFile);

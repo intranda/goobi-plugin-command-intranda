@@ -2,7 +2,6 @@ package de.intranda.goobi.plugins;
 
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,15 +15,11 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.SchrittDAO;
+
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
+
 
 @PluginImplementation
 public class RunScriptCommand implements ICommandPlugin, IPlugin {
@@ -35,10 +30,7 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 	private HttpServletResponse response;
 	private HashMap<String, String> parameterMap;
 
-	@Override
-	public String getId() {
-		return ID;
-	}
+	
 
 	@Override
 	public PluginType getType() {
@@ -47,8 +39,9 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
+		return ID;
 	}
+
 
 	@Override
 	public String getDescription() {
@@ -65,8 +58,8 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 		return null;
 	}
@@ -91,8 +84,8 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 				} else {
 					String title = "Error during execution";
 					String message = "script " + scriptname + " does not exist";
-//					return new CommandResponse(500,title, message);
-					return new CommandResponse(title, message);
+					return new CommandResponse(500,title, message);
+//					return new CommandResponse(title, message);
 				}
 			} else {
 				
@@ -106,21 +99,21 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 			logger.info(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
-//			return new CommandResponse(500,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(500,title, message);
+//			return new CommandResponse(title, message);
 		}
 		String title = "Command executed";
 		String message = "";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override

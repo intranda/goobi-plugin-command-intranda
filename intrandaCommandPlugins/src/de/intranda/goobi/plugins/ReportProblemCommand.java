@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,49 +11,43 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.apache.log4j.Logger;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.Persistence.SchrittDAO;
+import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 @PluginImplementation
 public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
-	private static final Logger logger = Logger.getLogger(ReportProblemCommand.class);
+//	private static final Logger logger = Logger.getLogger(ReportProblemCommand.class);
 	private static final String ID = "reportProblem";
 	private static final String NAME = "ReportProblem Command Plugin";
 	private HashMap<String, String> parameterMap;
 
 	@Override
-	public String getId() {
+	public String getTitle() {
 		return ID;
 	}
 
 	@Override
 	public PluginType getType() {
 		return PluginType.Command;
-	}
-
-	@Override
-	public String getTitle() {
-		return NAME;
 	}
 
 	@Override
@@ -70,18 +65,18 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			 return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		} else if (!this.parameterMap.containsKey("errorMessage")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'errorMessage' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			 return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		} else if (!this.parameterMap.containsKey("destinationStepName")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'destinationStepName' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			 return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 
 		// } else if (!this.parameterMap.containsKey("user")) {
@@ -94,8 +89,8 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		} catch (Exception e) {
 			String title = "Wrong value";
 			String message = "value for parameter 'stepId' is not a valid number.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			 return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 		// String destinationStepId = this.parameterMap.get("destinationStepId");
 		// try {
@@ -116,10 +111,16 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		String destinationTitle = this.parameterMap.get("destinationStepName");
 		// Integer targetid = Integer.parseInt(this.parameterMap.get("destinationStepName"));
 		String errorMessage = this.parameterMap.get("errorMessage");
-		SchrittDAO dao = new SchrittDAO();
-		ProzessDAO pdao = new ProzessDAO();
+		Session session = HibernateUtilOld.getSessionFactory().openSession();
+		if (!session.isOpen() || !session.isConnected()) {
+			Connection con = ConnectionHelper.getConnection();
+			session.reconnect(con);
+		}
+//		 SchrittDAO dao = new SchrittDAO();
+//		 ProzessDAO pdao = new ProzessDAO();
 		try {
-			Schritt source = dao.get(sourceid);
+			Schritt source = (Schritt) session.get(Schritt.class, sourceid);
+//			Schritt source = (Schritt) dao.get(sourceid);
 			source.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 			source.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 			source.setBearbeitungszeitpunkt(new Date());
@@ -148,7 +149,10 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 				source.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(source.getProzess().getWikifield(), "error", errorMessage));
 
 				temp.getEigenschaften().add(se);
-				dao.save(temp);
+
+				session.save(temp);
+//				 dao.save(temp);
+
 				source.getProzess()
 						.getHistory()
 						.add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
@@ -157,9 +161,12 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 				 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 				 */
 				@SuppressWarnings("unchecked")
-				List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+				List<Schritt> alleSchritteDazwischen = session.createCriteria(Schritt.class)
 						.add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
 						.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
+//				List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+//						.add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
+//						.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
 				for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 					Schritt step = iter.next();
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
@@ -174,29 +181,32 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 					seg.setCreationDate(new Date());
 					step.getEigenschaften().add(seg);
 				}
-				pdao.save(source.getProzess());
+				session.save(source.getProzess());
+//				pdao.save(source.getProzess());
 			}
-
-		} catch (DAOException e) {
-			logger.error(e);
-			String title = "Error during execution";
-			String message = "An error occured: " + e.getMessage();
-//			return new CommandResponse(500,title, message);
-			return new CommandResponse(title, message);
+		} finally {
+			session.close();
 		}
+//		} catch (DAOException e) {
+//			logger.error(e);
+//			String title = "Error during execution";
+//			String message = "An error occured: " + e.getMessage();
+//			// return new CommandResponse(500,title, message);
+//			return new CommandResponse(title, message);
+//		}
 
 		String title = "Command executed";
 		String message = "Problem reported";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		 return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		 return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
@@ -206,14 +216,10 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public void setHttpResponse(HttpServletResponse resp) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setHttpRequest(HttpServletRequest resp) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

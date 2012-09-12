@@ -33,18 +33,14 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 	private HashMap<String, String> parameterMap;
 
 	@Override
-	public String getId() {
+	public String getTitle() {
 		return ID;
 	}
+
 
 	@Override
 	public PluginType getType() {
 		return PluginType.Command;
-	}
-
-	@Override
-	public String getTitle() {
-		return NAME;
 	}
 
 	@Override
@@ -62,8 +58,8 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("filter")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'filter' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 		}
 		return null;
 	}
@@ -89,7 +85,8 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 		myFilteredDataSource.setFilterModes(stepOpenOnly, false);
 		myFilteredDataSource.setFilter(filter);
 		Criteria crit = myFilteredDataSource.getCriteria();
-		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+		for (@SuppressWarnings("unchecked")
+		Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
 			Schritt s = (Schritt) it.next();
 			myIds.add(s.getId());
 		}
@@ -121,21 +118,21 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 			logger.info(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
-//			return new CommandResponse(500,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(500,title, message);
+//			return new CommandResponse(title, message);
 		}
 		String title = "Command executed";
 		String message = "";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override

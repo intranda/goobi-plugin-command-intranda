@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,33 +11,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.apache.log4j.Logger;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.hibernate.Session;
 
+import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Benutzergruppe;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.BenutzergruppenDAO;
-import de.sub.goobi.Persistence.ProjektDAO;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
 
 @PluginImplementation
 public class AddStepCommand implements ICommandPlugin, IPlugin {
 
-	private static final Logger logger = Logger.getLogger(AddStepCommand.class);
+//	private static final Logger logger = Logger.getLogger(AddStepCommand.class);
 
 	private static final String ID = "addStepToProject";
-	private static final String NAME = "AddStep Command Plugin";
-	private static final String VERSION = "1.0.20111109";
+	
 
 	private HashMap<String, String> parameterMap;
 
@@ -47,11 +45,6 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
 
@@ -83,29 +76,29 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 		if (!parameterMap.containsKey("userGroupId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'userGroupId' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 
 		}
 		if (!parameterMap.containsKey("projectId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'projectId' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 
 		}
 		if (!parameterMap.containsKey("stepdata")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepdata' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 
 		}
 		if (!parameterMap.containsKey("orderNumber")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'orderNumber' defined.";
-//			return new CommandResponse(400,title, message);
-			return new CommandResponse(title, message);
+			return new CommandResponse(400,title, message);
+//			return new CommandResponse(title, message);
 
 		}
 
@@ -118,16 +111,21 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 		Integer userGroupId = Integer.parseInt(parameterMap.get("userGroupId"));
 		Integer orderNumber = Integer.parseInt(parameterMap.get("orderNumber"));
 		HashMap<String, String> stepdata = generateMap(parameterMap.get("stepdata"));
+	
+		Session session = HibernateUtilOld.getSessionFactory().openSession();
+		if (!session.isOpen() || !session.isConnected()) {
+			Connection con = ConnectionHelper.getConnection();
+			session.reconnect(con);
+		}
+		
 		try {
 
-			ProjektDAO pdao = new ProjektDAO();
-			ProzessDAO pd = new ProzessDAO();
-			BenutzergruppenDAO bendao = new BenutzergruppenDAO();
-			Projekt projekt = pdao.get(projectId);
+			
+			Projekt projekt = (Projekt) session.get(Projekt.class,projectId);
 
 			List<Prozess> plist = new ArrayList<Prozess>();
 			plist.addAll(projekt.getProzesse());
-			Benutzergruppe b = bendao.get(userGroupId);
+			Benutzergruppe b = (Benutzergruppe) session.get(Benutzergruppe.class,userGroupId);
 			for (Prozess p : plist) {
 				boolean added = false;
 				List<Schritt> slist = p.getSchritteList();
@@ -284,22 +282,24 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 						}
 					}
 				}
-				pd.save(p);
+				session.save(p);
 			}
 
-		} catch (DAOException e) {
-			logger.error(e);
-			String title = "Error during execution";
-			String message = "An error occured: " + e.getMessage();
-//			return new CommandResponse(500,title, message);
-			return new CommandResponse(title, message);
-
+//		} catch (DAOException e) {
+//			logger.error(e);
+//			String title = "Error during execution";
+//			String message = "An error occured: " + e.getMessage();
+////			return new CommandResponse(500,title, message);
+//			return new CommandResponse(title, message);
+		} finally {
+			session.close();
+		
 		}
 
 		String title = "Command executed";
 		String message = "Step closed";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 
 	}
 
@@ -315,10 +315,10 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		String title = "Command help for addStepToProject command";
+		String message = "This plugin adds a step to all processes of a given project";
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 
 	}
 

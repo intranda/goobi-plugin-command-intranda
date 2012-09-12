@@ -263,18 +263,18 @@ public class ArchivingUtils {
 		 *            The character encoding to use. If null, a standard utf-8 encoding will be used
 		 * @return
 		 */
-		public static String getStringFromDocument(Document document, String encoding) {
+		public static String getStringFromDocument(Document document, String encode) {
 			if (document == null) {
 				logger.warn("Trying to convert null document to String. Aborting");
 				return null;
 			}
-			if (encoding == null)
-				encoding = encoding;
+			if (encode == null)
+				encode = encoding;
 
 			XMLOutputter outputter = new XMLOutputter();
 			Format xmlFormat = outputter.getFormat();
-			if (!(encoding == null) && !encoding.isEmpty())
-				xmlFormat.setEncoding(encoding);
+			if (!(encode == null) && !encode.isEmpty())
+				xmlFormat.setEncoding(encode);
 			xmlFormat.setExpandEmptyElements(true);
 			outputter.setFormat(xmlFormat);
 			String docString = outputter.outputString(document);

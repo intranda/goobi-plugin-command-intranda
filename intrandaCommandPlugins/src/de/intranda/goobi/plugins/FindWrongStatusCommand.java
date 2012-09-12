@@ -27,7 +27,7 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 
 
 	private static final String ID = "findWrongStatus";
-	private static final String NAME = "FindWrongStatus Command Plugin";
+//	private static final String NAME = "FindWrongStatus Command Plugin";
 	private HttpServletResponse response;
 
 	@Override
@@ -38,18 +38,13 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public String getTitle() {
-		return NAME;
-	}
-
-	@Override
-	public String getId() {
 		return ID;
 	}
 
+
 	@Override
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return ID;
 	}
 
 	@Override
@@ -81,6 +76,7 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 		SQLQuery query = session.createSQLQuery(queryString);
 		query.addScalar("status", StandardBasicTypes.INTEGER);
 		query.addScalar("id", StandardBasicTypes.INTEGER);
+		@SuppressWarnings("rawtypes")
 		List list = query.list();
 		// List<Integer> bla = new ArrayList<Integer>();
 		HashMap<Integer, List<Integer>> map = new HashMap<Integer, List<Integer>>();
@@ -105,6 +101,7 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 				boolean zero = false;
 				boolean one = false;
 				boolean two = false;
+				@SuppressWarnings("unused")
 				boolean three = false;
 
 				for (Integer order : liste) {
@@ -135,26 +132,21 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 		}
 		String title = "Command executed";
 		String message = "";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
 		String title = "Command help";
 		String message = "this is the help for a command";
-//		return new CommandResponse(200,title, message);
-		return new CommandResponse(title, message);
+		return new CommandResponse(200,title, message);
+//		return new CommandResponse(title, message);
 	}
 
 	@Override
 	public boolean usesHttpSession() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
-	public static void main(String[] args) {
-		FindWrongStatusCommand fws = new FindWrongStatusCommand();
-		CommandResponse cr = fws.execute();
-	}
 }
