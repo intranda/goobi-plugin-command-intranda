@@ -141,7 +141,7 @@ public class Archiver extends Thread {
 		
 		// creating backup file and checking if one already exists
 		File destFile = null;
-		File tarFile = new File(tempFolder, goobiProcessTitle + "_" + goobiMetadataFolder.getName() + ".tar");
+		File tarFile = new File(tempFolder, goobiProcessTitle + "_" + goobiMetadataFolder.getName() + ".tar.gz");
 		if (useDateFolders) {
 			String dateString = ArchivingUtils.getCurrentDateString(false);
 			dateString = dateString.replaceAll("\\D", "");

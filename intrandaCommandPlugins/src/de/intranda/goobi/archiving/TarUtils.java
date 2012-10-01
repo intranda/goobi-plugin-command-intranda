@@ -11,6 +11,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -22,10 +24,22 @@ public class TarUtils {
 	
 	private static final Logger logger = Logger.getLogger(TarUtils.class);
 
+	/**
+	 * Create a tar archive and write results into Array of Strings. Returns the MD5 checksum as byte-Array
+	 * 
+	 * @param source
+	 * @return
+	 * @throws IOException
+	 */
 	public static byte[] tarFiles(HashMap<File, String> fileMap, File tarFile) throws IOException {
 
 		MessageDigest checksum = null;
-
+		boolean gzip = false;
+		if(tarFile.getName().endsWith(".gz")) {
+			gzip = true;
+		}
+		
+		
 		if (tarFile == null || fileMap == null || fileMap.size() == 0) {
 			return null;
 		}
@@ -33,15 +47,26 @@ public class TarUtils {
 		tarFile.getParentFile().mkdirs();
 
 		TarArchiveOutputStream tos = null;
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		GZIPOutputStream zip = null;
 		try {
-			FileOutputStream fos = new FileOutputStream(tarFile, true);
+			fos = new FileOutputStream(tarFile, true);
+			bos = new BufferedOutputStream(fos);
+			if(gzip) {				
+				zip = new GZIPOutputStream(bos);
+			}
 			try {
 				checksum = MessageDigest.getInstance("MD5");
 			} catch (NoSuchAlgorithmException e) {
 				logger.error("No checksum algorithm \"MD5\". Disabling checksum creation");
 				checksum = null;
 			}
-			tos = new TarArchiveOutputStream(fos);
+			if(gzip) {				
+				tos = new TarArchiveOutputStream(zip);
+			} else {
+				tos = new TarArchiveOutputStream(bos);
+			}
 			for (File file : fileMap.keySet()) {
 				logger.debug("Adding file " + file.getAbsolutePath() + " to tarfile " + tarFile.getAbsolutePath());
 				tarFile(file, fileMap.get(file), tos, checksum);
@@ -52,6 +77,15 @@ public class TarUtils {
 			logger.error(e.toString(), e);
 		} finally {
 			if (tos != null) {
+				tos.close();
+			}
+			if (fos != null) {
+				tos.close();
+			}
+			if (bos != null) {
+				tos.close();
+			}
+			if (zip != null) {
 				tos.close();
 			}
 		}
@@ -119,9 +153,24 @@ public class TarUtils {
 		if (!destDir.isDirectory())
 			destDir.mkdirs();
 
+		boolean isGzip = false;
+		if(source.getName().endsWith(".gz")) {
+			isGzip = true;
+		}
+		
+		GZIPInputStream zip = null;
 		TarArchiveInputStream in = null;
+		BufferedInputStream bis = null;
+		FileInputStream fis = null;
 		try {
-			in = new TarArchiveInputStream((new BufferedInputStream(new FileInputStream(source))));
+			fis = new FileInputStream(source);
+			bis = new BufferedInputStream(fis);
+			if(isGzip) {
+			zip = new GZIPInputStream(bis);
+			in = new TarArchiveInputStream(zip);
+			} else {
+				in = new TarArchiveInputStream(bis);
+			}
 			ArchiveEntry entry;
 			while ((entry = in.getNextEntry()) != null) {
 				File tempFile = new File(destDir, entry.getName());
@@ -157,9 +206,26 @@ public class TarUtils {
 	
 	public static boolean validateTar(File tarFile, boolean createTempFile, File origFilesParent) {
 
+		boolean isGzip = false;
+		if(tarFile.getName().endsWith(".gz")) {
+			isGzip = true;
+		}
+		
+		GZIPInputStream zip = null;
 		TarArchiveInputStream in = null;
+		BufferedInputStream bis = null;
+		FileInputStream fis = null;
 		try {
-			in = new TarArchiveInputStream((new BufferedInputStream(new FileInputStream(tarFile))));
+			fis = new FileInputStream(tarFile);
+			bis = new BufferedInputStream(fis);
+			if(isGzip) {
+			zip = new GZIPInputStream(bis);
+			in = new TarArchiveInputStream(zip);
+			} else {
+				in = new TarArchiveInputStream(bis);
+			}
+			
+//			in = new TarArchiveInputStream((new BufferedInputStream(new FileInputStream(tarFile))));
 			TarArchiveEntry entry;
 			File tempFile = null;
 			while ((entry = in.getNextTarEntry()) != null) {
@@ -227,9 +293,15 @@ public class TarUtils {
 			return false;
 		}
 		finally {
+			try {
 			if (in != null)
-				try {
-					in.close();
+				in.close();
+			if (zip != null)
+				zip.close();
+			if (bis != null)
+				bis.close();
+			if (fis != null)
+				fis.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -238,5 +310,6 @@ public class TarUtils {
 
 		return true;
 	}
+
 	
 }

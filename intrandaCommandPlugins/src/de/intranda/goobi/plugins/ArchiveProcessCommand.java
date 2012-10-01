@@ -126,7 +126,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 			p = (Prozess) session.get(Prozess.class, Integer.valueOf(parameterMap.get("processId")));
 //			p = dao.get(Integer.valueOf(parameterMap.get("processId")));
 			processDir = new File(p.getProcessDataDirectory());
-			origImagesDir = new File(p.getImagesOrigDirectory());
+			origImagesDir = new File(p.getImagesOrigDirectory(true));
 		} catch (Exception e) {
 			logger.error("Unable to find process");
 			String title = "Process Error";

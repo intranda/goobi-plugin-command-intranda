@@ -42,8 +42,9 @@ public class HashFileCreator {
 	public void createHashFile(File fileDir) {
 
 		//first get all existing entries in the swap file//only makes sense when using date folders
-		if (fileDir != null && fileDir.isDirectory()) {
-			doc = ArchivingUtils.getDocumentFromFile(new File(fileDir, "swapped.xml"));
+		File swappedFile = new File(fileDir, "swapped.xml");
+		if (fileDir != null && fileDir.isDirectory() && swappedFile.isFile()) {
+			doc = ArchivingUtils.getDocumentFromFile(swappedFile);
 			@SuppressWarnings("rawtypes")
 			List filePaths = doc.getRootElement().getChildren("file");
 			if (filePaths != null) {
