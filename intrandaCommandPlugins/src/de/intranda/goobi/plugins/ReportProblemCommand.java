@@ -21,7 +21,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import de.intranda.goobi.plugins.helper.ConnectionHelper;
-import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
@@ -35,7 +34,7 @@ import de.sub.goobi.helper.enums.StepStatus;
 @PluginImplementation
 public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
-//	private static final Logger logger = Logger.getLogger(ReportProblemCommand.class);
+	// private static final Logger logger = Logger.getLogger(ReportProblemCommand.class);
 	private static final String ID = "reportProblem";
 	private static final String NAME = "ReportProblem Command Plugin";
 	private HashMap<String, String> parameterMap;
@@ -54,7 +53,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 	public String getDescription() {
 		return NAME;
 	}
-	
+
 	public String getId() {
 		return ID;
 	}
@@ -69,18 +68,18 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		if (!this.parameterMap.containsKey("stepId")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'stepId' defined.";
-			 return new CommandResponse(400,title, message);
-//			return new CommandResponse(title, message);
+			return new CommandResponse(400, title, message);
+			// return new CommandResponse(title, message);
 		} else if (!this.parameterMap.containsKey("errorMessage")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'errorMessage' defined.";
-			 return new CommandResponse(400,title, message);
-//			return new CommandResponse(title, message);
+			return new CommandResponse(400, title, message);
+			// return new CommandResponse(title, message);
 		} else if (!this.parameterMap.containsKey("destinationStepName")) {
 			String title = "Missing parameter";
 			String message = "No parameter 'destinationStepName' defined.";
-			 return new CommandResponse(400,title, message);
-//			return new CommandResponse(title, message);
+			return new CommandResponse(400, title, message);
+			// return new CommandResponse(title, message);
 		}
 
 		// } else if (!this.parameterMap.containsKey("user")) {
@@ -93,8 +92,8 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		} catch (Exception e) {
 			String title = "Wrong value";
 			String message = "value for parameter 'stepId' is not a valid number.";
-			 return new CommandResponse(400,title, message);
-//			return new CommandResponse(title, message);
+			return new CommandResponse(400, title, message);
+			// return new CommandResponse(title, message);
 		}
 		// String destinationStepId = this.parameterMap.get("destinationStepId");
 		// try {
@@ -120,18 +119,18 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 			Connection con = ConnectionHelper.getConnection();
 			session.reconnect(con);
 		}
-//		 SchrittDAO dao = new SchrittDAO();
-//		 ProzessDAO pdao = new ProzessDAO();
+		// SchrittDAO dao = new SchrittDAO();
+		// ProzessDAO pdao = new ProzessDAO();
 		try {
 			Schritt source = (Schritt) session.get(Schritt.class, sourceid);
-//			Schritt source = (Schritt) dao.get(sourceid);
+			// Schritt source = (Schritt) dao.get(sourceid);
 			source.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 			source.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
 			source.setBearbeitungszeitpunkt(new Date());
-			Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-			if (ben != null) {
-				source.setBearbeitungsbenutzer(ben);
-			}
+			// Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			// if (ben != null) {
+			// source.setBearbeitungsbenutzer(ben);
+			// }
 			source.setBearbeitungsbeginn(null);
 			Schritt temp = null;
 			for (Schritt s : source.getProzess().getSchritteList()) {
@@ -155,7 +154,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 				temp.getEigenschaften().add(se);
 
 				session.save(temp);
-//				 dao.save(temp);
+				// dao.save(temp);
 
 				source.getProzess()
 						.getHistory()
@@ -168,9 +167,9 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 				List<Schritt> alleSchritteDazwischen = session.createCriteria(Schritt.class)
 						.add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
 						.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
-//				List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
-//						.add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
-//						.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
+				// List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
+				// .add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
+				// .addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
 				for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 					Schritt step = iter.next();
 					step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
@@ -186,31 +185,33 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 					step.getEigenschaften().add(seg);
 				}
 				session.save(source.getProzess());
-//				pdao.save(source.getProzess());
+				// pdao.save(source.getProzess());
 			}
 		} finally {
 			session.close();
 		}
-//		} catch (DAOException e) {
-//			logger.error(e);
-//			String title = "Error during execution";
-//			String message = "An error occured: " + e.getMessage();
-//			// return new CommandResponse(500,title, message);
-//			return new CommandResponse(title, message);
-//		}
+		// } catch (DAOException e) {
+		// logger.error(e);
+		// String title = "Error during execution";
+		// String message = "An error occured: " + e.getMessage();
+		// // return new CommandResponse(500,title, message);
+		// return new CommandResponse(title, message);
+		// }
 
 		String title = "Command executed";
 		String message = "Problem reported";
-		 return new CommandResponse(200,title, message);
-//		return new CommandResponse(title, message);
+		return new CommandResponse(200, title, message);
+		// return new CommandResponse(title, message);
 	}
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
-		 return new CommandResponse(200,title, message);
-//		return new CommandResponse(title, message);
+		String title = "Command help for reportProblem";
+		String message = "This command reports a problem to a previous task.";
+		message += "\n - 'stepId' defines the task where the problem is noticed..";
+		message += "\n - 'errorMessage' defines the message for the error.";
+		message += "\n - 'destinationStepName' defines the name (not the ID) of the destination for the report.";
+		return new CommandResponse(200, title, message);
 	}
 
 	@Override

@@ -126,8 +126,10 @@ public class ProcessFilterCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for processFilter";
+		String message = "This command filters for processes. The complete filter syntax of goobi can be used.";
+		message += "\n - 'filter' is mandatory. 'filter' defines the search request.";
+		message += "\n -  'separator' is optional. The value defines the separator between each single result id. The default separator is 'new line'.";
 		return new CommandResponse(200,title, message);
 //		return new CommandResponse(title, message);
 	}

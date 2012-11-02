@@ -138,7 +138,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 						MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
 						FolderInformation fi = new FolderInformation(id, po.getTitle());
 						try {
-							if (!mih.checkIfImagesValid(po.getTitle(), fi.getImagesOrigDirectory())) {
+							if (!mih.checkIfImagesValid(po.getTitle(), fi.getImagesOrigDirectory(false))) {
 								valid = false;
 								message = "Step not closed, images not found.";
 							}
@@ -173,8 +173,9 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for closeStepByProcessId";
+		String message = "This command closes the first open step and opens the next task. If next task is an automatic task, all scripts gets started." +
+				"\n 'processId' defines the process where the first open step gets closed.";
 		return new CommandResponse(200, title, message);
 		// return new CommandResponse(title, message);
 	}

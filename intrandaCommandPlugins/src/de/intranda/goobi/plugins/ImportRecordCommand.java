@@ -159,8 +159,10 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for importRecordCommand.";
+		String message = "This command imports new records into goobi using file import mechanism of the ImportPlugin 'goobiImport'.";
+		message += "\n - 'filename' defines the filename of the metadata file.";
+		message += "\n - 'templateId' defines the id of the template to generate a process based on it.";
 		return new CommandResponse(200, title, message);
 	}
 }

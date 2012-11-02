@@ -92,8 +92,9 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for closeStep";
+		String message = "This command closes a step and opens the next task. If next task is an automatic task, all scripts gets started." +
+				"\n 'stepId' defines the step that gets closed.";
 		return new CommandResponse(200,title, message);
 //		return new CommandResponse(title, message);
 	}

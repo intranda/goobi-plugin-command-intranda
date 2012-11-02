@@ -127,8 +127,11 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 	
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for exportDms";
+		String message = "This command triggers the export to DMS for a process.";
+		message += " - 'processId' defines the ID of the process.";
+		message += " - 'images' defines whether the images gets exported or not. Allowed values are 'true' and 'false'.";
+		message += " - 'ocr' defines whether the ocr data gets exported or not. Allowed values are 'true' and 'false'.";
 		return new CommandResponse(200,title, message);
 //		return new CommandResponse(title, message);
 	}

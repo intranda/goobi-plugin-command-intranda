@@ -113,8 +113,12 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
-		String message = "this is the help for a command";
+		String title = "Command help for runScript";
+		String message = "This command calls scripts for a given task.";
+		message += "\n - 'stepId' defines the id of the task.";
+		message += "\n - 'scriptname' is optional and defines a script to call. If no script is defined, all scripts of the task gets started.";
+//		stepId
+//		scriptname
 		return new CommandResponse(200,title, message);
 //		return new CommandResponse(title, message);
 	}
