@@ -27,6 +27,7 @@ import ugh.dl.Prefs;
 import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 
 @PluginImplementation
@@ -93,21 +94,32 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse execute() {
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+//		Session session = HibernateUtilOld.getSessionFactory().openSession();
+//		if (!session.isOpen() || !session.isConnected()) {
+//			Connection con = ConnectionHelper.getConnection();
+//			session.reconnect(con);
+//		}
 		try {
 			Integer id = Integer.parseInt(this.parameterMap.get("templateId"));
-
-			Prozess template = (Prozess) session.get(Prozess.class, id);
+			logger.debug("templateId is " + id); 
+//			Prozess template = (Prozess) session.get(Prozess.class, id);
+			Prozess template = new ProzessDAO().get(id);
+			if (template != null) {
+				logger.debug("template is " + template.getTitel());
+			} else {
+				logger.debug("cannot find template with id " + id);
+			}
 			// ProzessDAO dao = new ProzessDAO();
 			// Prozess template = dao.get(id);
 
 			String filename = parameterMap.get("filename");
 
 			IImportPlugin wmi = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, "goobiImport");
+			if (wmi != null) {
+				logger.debug("plugin " + wmi.getTitle() + " loaded");
+			} else {
+				logger.debug("cannot load plugin with title goobiImport");
+			}
 			// IImportPlugin wmi = (IImportPlugin) PluginLoader.getPlugin(PluginType.Import, "IntrandaGoobiImport");
 
 			List<String> filenameList = new ArrayList<String>();
@@ -115,12 +127,15 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			List<Record> recordList = new ArrayList<Record>();
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Prefs prefs = template.getRegelsatz().getPreferences();
+			logger.debug("ruleset is " + template.getRegelsatz());
 			String tempfolder = ConfigMain.getParameter("tempfolder");
+			logger.debug("tempfolder is : " + tempfolder);
 			wmi.setImportFolder(tempfolder);
 			wmi.setPrefs(prefs);
 			recordList = wmi.generateRecordsFromFilenames(filenameList);
+			logger.debug("extracted " + recordList.size() + " records from " + filenameList.size() + " files.");
 			answer = wmi.generateFiles(recordList);
-
+			logger.debug("generated " + answer.size() + " metadata files");
 			if (answer != null && answer.size() > 0) {
 				ImportObject io = answer.get(0);
 				if (!io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
@@ -152,8 +167,8 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
 			return new CommandResponse(200, title, message);
-		} finally {
-			session.close();
+//		} finally {
+//			session.close();
 		}
 	}
 
