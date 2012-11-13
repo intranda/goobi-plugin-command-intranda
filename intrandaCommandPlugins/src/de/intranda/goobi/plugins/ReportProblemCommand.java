@@ -1,6 +1,5 @@
 package de.intranda.goobi.plugins;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,16 +19,18 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
 import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
 
 @PluginImplementation
 public class ReportProblemCommand implements ICommandPlugin, IPlugin {
@@ -114,15 +115,16 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		String destinationTitle = this.parameterMap.get("destinationStepName");
 		// Integer targetid = Integer.parseInt(this.parameterMap.get("destinationStepName"));
 		String errorMessage = this.parameterMap.get("errorMessage");
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+		SchrittDAO dao = new SchrittDAO();
+		Session session = Helper.getHibernateSession();
+//		if (!session.isOpen() || !session.isConnected()) {
+//			Connection con = ConnectionHelper.getConnection();
+//			session.reconnect(con);
+//		}
 		// SchrittDAO dao = new SchrittDAO();
 		// ProzessDAO pdao = new ProzessDAO();
 		try {
-			Schritt source = (Schritt) session.get(Schritt.class, sourceid);
+			Schritt source = dao.get(sourceid);
 			// Schritt source = (Schritt) dao.get(sourceid);
 			source.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 			source.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
@@ -153,7 +155,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
 				temp.getEigenschaften().add(se);
 
-				session.save(temp);
+				dao.save(temp);
 				// dao.save(temp);
 
 				source.getProzess()
@@ -184,19 +186,16 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 					seg.setCreationDate(new Date());
 					step.getEigenschaften().add(seg);
 				}
-				session.save(source.getProzess());
+				new ProzessDAO().save(source.getProzess());
 				// pdao.save(source.getProzess());
 			}
-		} finally {
-			session.close();
-		}
-		// } catch (DAOException e) {
-		// logger.error(e);
-		// String title = "Error during execution";
-		// String message = "An error occured: " + e.getMessage();
-		// // return new CommandResponse(500,title, message);
-		// return new CommandResponse(title, message);
-		// }
+		
+		 } catch (DAOException e) {
+		 String title = "Error during execution";
+		 String message = "An error occured: " + e.getMessage();
+		 // return new CommandResponse(500,title, message);
+		 return new CommandResponse(title, message);
+		 }
 
 		String title = "Command executed";
 		String message = "Problem reported";

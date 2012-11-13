@@ -3,7 +3,6 @@ package de.intranda.goobi.plugins;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,6 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.hibernate.Session;
 
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.schlichtherle.io.File;
 import de.schlichtherle.io.FileOutputStream;
 import de.sub.goobi.Beans.Prozess;
@@ -96,10 +94,6 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
 		Integer processId = Integer.parseInt(parameterMap.get("processId"));
 		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
 		File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
 		OutputStream out = null;
 		try {

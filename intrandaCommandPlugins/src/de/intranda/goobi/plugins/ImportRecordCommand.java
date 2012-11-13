@@ -1,6 +1,5 @@
 package de.intranda.goobi.plugins;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,12 +20,9 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
 import ugh.dl.Prefs;
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 

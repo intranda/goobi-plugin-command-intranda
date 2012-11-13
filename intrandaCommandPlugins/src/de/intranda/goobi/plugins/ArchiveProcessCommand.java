@@ -1,7 +1,6 @@
 package de.intranda.goobi.plugins;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.HashMap;
 
 
@@ -15,13 +14,11 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
 import de.intranda.goobi.archiving.Archiver;
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.download.ExportMets;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.Helper;
 
 @PluginImplementation
@@ -115,15 +112,15 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		Prozess p = null;
 		File processDir = null;
 		File origImagesDir = null;
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+//		Session session = HibernateUtilOld.getSessionFactory().openSession();
+//		if (!session.isOpen() || !session.isConnected()) {
+//			Connection con = ConnectionHelper.getConnection();
+//			session.reconnect(con);
+//		}
 		try {
 			//get Process data
 			
-			p = (Prozess) session.get(Prozess.class, Integer.valueOf(parameterMap.get("processId")));
+			p = new ProzessDAO().get(Integer.valueOf(parameterMap.get("processId")));
 //			p = dao.get(Integer.valueOf(parameterMap.get("processId")));
 			processDir = new File(p.getProcessDataDirectory());
 			origImagesDir = new File(p.getImagesOrigDirectory(true));
@@ -133,9 +130,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 			String message = "Unable to find process";
 			return new CommandResponse(500,title, message);
 //			return new CommandResponse(title, message);
-		} finally {
-			session.close();
-		}	
+		} 	
 			//create exported mets
 		try {
 			File exportedMetsDir = new File(processDir, "exported_mets");

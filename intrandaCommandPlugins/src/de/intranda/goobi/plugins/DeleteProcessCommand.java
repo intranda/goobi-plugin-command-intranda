@@ -1,7 +1,6 @@
 package de.intranda.goobi.plugins;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,15 +13,12 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Benutzer;
 import de.sub.goobi.Beans.Benutzergruppe;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.HibernateUtilOld;
-//import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 
@@ -87,14 +83,13 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 	@Override
 	public CommandResponse execute() {
 		Integer id = Integer.parseInt(parameterMap.get("processId"));
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+//		if (!session.isOpen() || !session.isConnected()) {
+//			Connection con = ConnectionHelper.getConnection();
+//			session.reconnect(con);
+//		}
 		try {
 		
-			Prozess p = (Prozess) session.get(Prozess.class, id);
+			Prozess p = new ProzessDAO().get( id);
 			for (Schritt step : p.getSchritteList()) {
 				WebDav myDav = new WebDav();
 				for (Benutzer b : step.getBenutzerList()) {
@@ -115,16 +110,14 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 
 			Helper.deleteDir(new File(p.getProcessDataDirectory()));
 //			dao.remove(id);
-			session.delete(p);
+			
 		} catch (Exception e) {
 			logger.error(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
 			return new CommandResponse(500,title, message);
 //			return new CommandResponse(title, message);
-		} finally {
-			session.close();
-		}
+		} 
 
 		String title = "Command executed";
 		String message = "Process deleted";

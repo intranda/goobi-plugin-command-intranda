@@ -2,7 +2,6 @@ package de.intranda.goobi.plugins;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,11 +17,11 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.hibernate.Session;
 
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.Persistence.ProzessDAO;
 //import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 
@@ -95,14 +94,14 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 		Integer processId = Integer.parseInt(this.parameterMap.get("processId"));
 
 		InputStream in = null;
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+//		Session session = HibernateUtilOld.getSessionFactory().openSession();
+//		if (!session.isOpen() || !session.isConnected()) {
+//			Connection con = ConnectionHelper.getConnection();
+//			session.reconnect(con);
+//		}
 		try {
 
-			Prozess process = (Prozess) session.get(Prozess.class, processId);
+			Prozess process = new ProzessDAO().get(processId);
 
 			File meta = new File(process.getMetadataFilePath());
 			File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
@@ -144,8 +143,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 			in.close();
 		} catch (Exception e) {
 			logger.error(e);
-		} finally {
-			session.close();
+		
 		}
 		String title = "Command executed";
 		String message = "UCC download started";

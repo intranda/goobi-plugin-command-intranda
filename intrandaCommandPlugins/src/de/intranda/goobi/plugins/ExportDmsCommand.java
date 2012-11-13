@@ -1,6 +1,5 @@
 package de.intranda.goobi.plugins;
 
-import java.sql.Connection;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,12 +12,10 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
-import de.intranda.goobi.plugins.helper.ConnectionHelper;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Export.dms.ExportDms;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+import de.sub.goobi.Persistence.ProzessDAO;
 
 
 @PluginImplementation
@@ -96,14 +93,10 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 		Integer id = Integer.parseInt(parameterMap.get("processId"));
 		boolean images = Boolean.parseBoolean(parameterMap.get("images"));
 		boolean ocr = Boolean.parseBoolean(parameterMap.get("ocr"));
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
-		if (!session.isOpen() || !session.isConnected()) {
-			Connection con = ConnectionHelper.getConnection();
-			session.reconnect(con);
-		}
+
 		try {
 			
-			Prozess source = (Prozess) session.get(Prozess.class, id);
+			Prozess source = new ProzessDAO().get(id);
 //			ProzessDAO dao = new ProzessDAO();
 //			Prozess p = dao.get(id);
 			ExportDms export = new ExportDms(images);
@@ -116,9 +109,7 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 			return new CommandResponse(500,title, message);
 //			return new CommandResponse(title, message);
 		}
-		finally {
-			session.close();
-		}
+		
 		String title = "Command executed";
 		String message = "Process exported to DMS";
 		return new CommandResponse(200,title, message);
