@@ -142,7 +142,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for ucc_upload";
+		String title = "Command ucc_upload";
 		String message = "this command accepts a ucc sip file for a specific process.";
 		message += "\n The parameter 'processId' defines to which process the sip file belongs. The sip file is sended via http post request.";
 		// return new CommandResponse(200, title, message);

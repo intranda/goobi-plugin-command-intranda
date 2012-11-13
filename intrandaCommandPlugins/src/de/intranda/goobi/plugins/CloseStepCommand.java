@@ -83,7 +83,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		StepObject so = StepManager.getStepById(id);
 		logger.debug("loaded StepObject with id " + so.getId());
 		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
-		hs.CloseStepObjectAutomatic(so);	
+		hs.CloseStepObjectAutomatic(so, false);	
 		String title = "Command executed";
 		String message = "Step closed";
 		return new CommandResponse(200,title, message);
@@ -92,7 +92,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for closeStep";
+		String title = "Command closeStep";
 		String message = "This command closes a step and opens the next task. If next task is an automatic task, all scripts gets started." +
 				"\n 'stepId' defines the step that gets closed.";
 		return new CommandResponse(200,title, message);

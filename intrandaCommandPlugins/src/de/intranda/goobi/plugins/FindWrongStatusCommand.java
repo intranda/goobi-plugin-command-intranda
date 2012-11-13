@@ -140,7 +140,7 @@ public class FindWrongStatusCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
+		String title = "Command findWrongStatus";
 		String message = "obsolet";
 		return new CommandResponse(200,title, message);
 //		return new CommandResponse(title, message);

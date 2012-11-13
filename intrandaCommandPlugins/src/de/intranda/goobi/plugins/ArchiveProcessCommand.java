@@ -166,7 +166,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help";
+		String title = "Command archiveProcess";
 		String message = "Syntax: \"command=archiveProcess\"; \"processId=[The processId of the Goobi process to be archived]\".";
 		message = message.concat("\nThis plugin requires the file \"archiving.properties\" in the goobi/config folder. There, additional parameters such as destination path can be adjusted.");
 		return new CommandResponse(200,title, message);

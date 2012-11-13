@@ -205,7 +205,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for reportProblem";
+		String title = "Command reportProblem";
 		String message = "This command reports a problem to a previous task.";
 		message += "\n - 'stepId' defines the task where the problem is noticed..";
 		message += "\n - 'errorMessage' defines the message for the error.";

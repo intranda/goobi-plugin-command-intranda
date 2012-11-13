@@ -127,7 +127,7 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for deleteProcess";
+		String title = "Command deleteProcess";
 		String message = "This command deletes a process in Goobi." +
 				"\nThe parameter 'processId' defines the process.";
 		return new CommandResponse(200,title, message);

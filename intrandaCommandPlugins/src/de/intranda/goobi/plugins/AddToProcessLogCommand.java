@@ -136,7 +136,7 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for addToProcessLog";
+		String title = "Command addToProcessLog";
 		
 		String message = "This command adds a message to the log for a process." +
 				"\n - 'processId' defines the process." +

@@ -132,7 +132,7 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for stepFilter";
+		String title = "Command stepFilter";
 		String message = "This command filters for steps. The complete filter syntax of goobi can be used.";
 		message += "\n - 'filter' is mandatory. 'filter' defines the search request.";
 		message += "\n - 'stepOpenOnly' is optional. Allowed values are 'true' and 'false', the default value is 'false' It defines if the result contains only open steps or all.";

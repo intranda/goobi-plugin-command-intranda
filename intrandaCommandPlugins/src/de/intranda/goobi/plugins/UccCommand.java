@@ -153,7 +153,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for ucc";
+		String title = "Command ucc";
 		String message = "The command 'ucc' sends a sip file for a specific process to the requester.";
 		message += "\n The parameter 'processId' defines to which process the sip file belongs.";
 		return new CommandResponse(200, title, message);

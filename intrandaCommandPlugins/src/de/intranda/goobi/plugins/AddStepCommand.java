@@ -314,7 +314,7 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command help for addStepToProject command";
+		String title = "Command addStepToProject";
 		String message = "This plugin adds a step to all processes of a given project";
 		return new CommandResponse(200, title, message);
 		// return new CommandResponse(title, message);
