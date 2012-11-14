@@ -83,7 +83,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		StepObject so = StepManager.getStepById(id);
 		logger.debug("loaded StepObject with id " + so.getId());
 		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
-		hs.CloseStepObjectAutomatic(so, false);	
+		hs.CloseStepObjectAutomatic(so);	
 		String title = "Command executed";
 		String message = "Step closed";
 		return new CommandResponse(200,title, message);
