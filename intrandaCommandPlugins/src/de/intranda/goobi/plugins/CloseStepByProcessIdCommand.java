@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import de.sub.goobi.Persistence.apache.ProcessObject;
 import de.sub.goobi.Persistence.apache.StepManager;
 import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 
 @PluginImplementation
@@ -152,6 +154,40 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 						logger.debug("loaded StepObject with id " + so.getId());
 						HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 						hs.CloseStepObjectAutomatic(so);
+						
+						// try to remove symlink from user home 
+						if (parameterMap.get("username") != null && parameterMap.get("username").length() > 0) {
+							String homeDir = ConfigMain.getParameter("dir_Users");
+							String username = parameterMap.get("username");
+
+							String nach = homeDir + username + "/";
+							
+							nach += po.getTitle() + " [" + po.getId() + "]";
+
+							/* Leerzeichen maskieren */
+							nach = nach.replaceAll(" ", "__");
+							File benutzerHome = new File(nach);
+
+							String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
+							command += benutzerHome;
+							// myLogger.debug(command);
+
+							try {
+								Helper.callShell(command);
+							} catch (java.io.IOException ioe) {
+								logger.error("IOException UploadFromHome", ioe);
+								String title = "Error during execution";
+								message = "Step was closed, but unmount from user home failed";
+								return new CommandResponse(500, title, message);
+							} catch (InterruptedException e) {
+								logger.error("IOException UploadFromHome", e);
+								String title = "Error during execution";
+								message = "Step was closed, but unmount from user home failed";
+								return new CommandResponse(500, title, message);
+							}
+							
+						}
+						
 						String title = "Command executed";
 						message = "Step closed";
 						return new CommandResponse(200, title, message);
