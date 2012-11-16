@@ -22,7 +22,6 @@ import org.hibernate.criterion.Restrictions;
 import de.sub.goobi.Beans.HistoryEvent;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Beans.Schritteigenschaft;
-import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.Persistence.SchrittDAO;
 import de.sub.goobi.helper.Helper;
@@ -55,6 +54,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		return NAME;
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

@@ -42,6 +42,7 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

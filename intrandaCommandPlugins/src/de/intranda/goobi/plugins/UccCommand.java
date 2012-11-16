@@ -15,12 +15,9 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
-
 import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
 import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.Persistence.ProzessDAO;
 //import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
@@ -47,6 +44,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 	
+	@Override
 	public String getId() {
 		return ID;
 	}
@@ -117,12 +115,12 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 				// Empty archive if it already exists
 				backup.deleteAll();
 			}
-			meta.copyTo(new File(backup + File.separator + "meta.xml"));
+			meta.copyTo(new File(backup + java.io.File.separator + "meta.xml"));
 			if (anchor.exists()) {
-				anchor.copyTo(new File(backup + File.separator + "meta_anchor.xml"));
+				anchor.copyTo(new File(backup + java.io.File.separator + "meta_anchor.xml"));
 			}
-			ruleset.copyTo(new File(backup + File.separator + "ruleset.xml"));
-			log.copyTo(new File(backup + File.separator + "logfile.xml"));
+			ruleset.copyTo(new File(backup + java.io.File.separator + "ruleset.xml"));
+			log.copyTo(new File(backup + java.io.File.separator + "logfile.xml"));
 			File.umount();
 
 			// output data

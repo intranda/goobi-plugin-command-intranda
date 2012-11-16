@@ -45,6 +45,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 	
+	@Override
 	public String getId() {
 		return ID;
 	}
@@ -162,7 +163,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			logger.error(e);
 			String title = "Error during execution";
 			String message = "An error occured: " + e.getMessage();
-			return new CommandResponse(200, title, message);
+			return new CommandResponse(500, title, message);
 //		} finally {
 //			session.close();
 		}

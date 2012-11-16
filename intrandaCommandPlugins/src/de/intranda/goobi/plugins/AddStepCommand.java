@@ -21,7 +21,6 @@ import de.sub.goobi.Beans.Projekt;
 import de.sub.goobi.Beans.Prozess;
 import de.sub.goobi.Beans.Schritt;
 import de.sub.goobi.Persistence.BenutzergruppenDAO;
-import de.sub.goobi.Persistence.HibernateUtilOld;
 import de.sub.goobi.Persistence.ProjektDAO;
 import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.enums.HistoryEventType;
@@ -48,6 +47,7 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}
@@ -118,12 +118,12 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 
 		
 		try {
-			Projekt projekt = (Projekt) new ProjektDAO().get(projectId);
+			Projekt projekt = new ProjektDAO().get(projectId);
 		
 
 		List<Prozess> plist = new ArrayList<Prozess>();
 		plist.addAll(projekt.getProzesse());
-		Benutzergruppe b = (Benutzergruppe) new BenutzergruppenDAO().get(userGroupId);
+		Benutzergruppe b = new BenutzergruppenDAO().get(userGroupId);
 		for (Prozess p : plist) {
 			boolean added = false;
 			List<Schritt> slist = p.getSchritteList();

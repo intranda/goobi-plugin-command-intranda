@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -50,7 +51,7 @@ public class Archiver extends Thread {
 	private boolean readConfig(File configFile) {
 
 		try {
-			PropertiesConfiguration.setDefaultListDelimiter('&');
+			AbstractConfiguration.setDefaultListDelimiter('&');
 			PropertiesConfiguration config = new PropertiesConfiguration(configFile);
 			config.setReloadingStrategy(new FileChangedReloadingStrategy());
 

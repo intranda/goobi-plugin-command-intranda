@@ -13,8 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -203,7 +201,7 @@ public class ArchivingUtils {
 		 * @return
 		 */
 		public static String getCurrentDateString(boolean timeOfDay) {
-			Calendar cal = GregorianCalendar.getInstance();
+			Calendar cal = Calendar.getInstance();
 			Date date = cal.getTime();
 
 			SimpleDateFormat simpDate;
