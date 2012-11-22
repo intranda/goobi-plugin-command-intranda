@@ -46,7 +46,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
+	
 	public String getId() {
 		return ID;
 	}

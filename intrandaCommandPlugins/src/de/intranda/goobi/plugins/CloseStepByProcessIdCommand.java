@@ -53,7 +53,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
+	
 	public String getId() {
 		return ID;
 	}
@@ -174,7 +174,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 							// myLogger.debug(command);
 
 							try {
-								Helper.callShell(command);
+								Helper.callShell2(command);
 							} catch (java.io.IOException ioe) {
 								logger.error("IOException UploadFromHome", ioe);
 								String title = "Error during execution";

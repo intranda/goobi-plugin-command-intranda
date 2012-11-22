@@ -54,7 +54,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 		return NAME;
 	}
 
-	@Override
+	
 	public String getId() {
 		return ID;
 	}

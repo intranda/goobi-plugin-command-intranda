@@ -43,7 +43,7 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
+	
 	public String getId() {
 		return ID;
 	}
