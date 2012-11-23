@@ -13,8 +13,10 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
@@ -31,6 +33,7 @@ import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
+import de.sub.goobi.helper.enums.StepStatus;
 
 @PluginImplementation
 public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
@@ -150,6 +153,16 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 							message = "Step not closed, images not found.";
 						}
 					}
+					
+					if (so.getValidationPlugin() != null && so.getValidationPlugin().length() >0) {
+						IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, so.getValidationPlugin());
+						ivp.setStepObject(so);
+						if (!ivp.validate()) {
+							valid = false;
+							message = "Step not closed, validation failed";
+						}
+					}
+					
 					if (valid) {
 						// StepObject so = StepManager.getStepById(id);
 						logger.debug("loaded StepObject with id " + so.getId());
