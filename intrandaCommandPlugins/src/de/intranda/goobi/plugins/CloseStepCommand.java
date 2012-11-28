@@ -11,8 +11,10 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 import de.sub.goobi.Persistence.apache.ProcessManager;
 import de.sub.goobi.Persistence.apache.ProcessObject;
@@ -87,6 +89,15 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		Integer id = Integer.parseInt(this.parameterMap.get("stepId"));
 		logger.debug("closing step with id " + id);
 		StepObject so = StepManager.getStepById(id);
+		if (so.getValidationPlugin() != null && so.getValidationPlugin().length() >0) {
+			IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, so.getValidationPlugin());
+			ivp.setStepObject(so);
+			if (!ivp.validate()) {
+				String title = "Error during execution";
+				String message = "Step not closed, validation failed";
+				return new CommandResponse(500, title, message);
+			}
+		}
 		logger.debug("loaded StepObject with id " + so.getId());
 		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 		hs.CloseStepObjectAutomatic(so);	
