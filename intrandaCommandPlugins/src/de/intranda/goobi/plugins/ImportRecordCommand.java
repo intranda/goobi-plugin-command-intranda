@@ -124,7 +124,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			List<Record> recordList = new ArrayList<Record>();
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Prefs prefs = template.getRegelsatz().getPreferences();
-			logger.debug("ruleset is " + template.getRegelsatz());
+			logger.debug("ruleset is " + template.getRegelsatz().getDatei());
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			logger.debug("tempfolder is : " + tempfolder);
 			wmi.setImportFolder(tempfolder);
