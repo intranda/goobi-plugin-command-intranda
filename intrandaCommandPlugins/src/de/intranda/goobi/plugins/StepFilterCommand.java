@@ -85,7 +85,7 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 		}
 		
 		try {
-		UserDefinedStepFilter myFilteredDataSource = new UserDefinedStepFilter();
+		UserDefinedStepFilter myFilteredDataSource = new UserDefinedStepFilter(false);
 		myFilteredDataSource.setFilterModes(stepOpenOnly, false);
 		myFilteredDataSource.setFilter(filter);
 		Criteria crit = myFilteredDataSource.getCriteria();

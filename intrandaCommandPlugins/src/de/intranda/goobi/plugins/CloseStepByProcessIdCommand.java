@@ -33,7 +33,6 @@ import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
-import de.sub.goobi.helper.enums.StepStatus;
 
 @PluginImplementation
 public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
