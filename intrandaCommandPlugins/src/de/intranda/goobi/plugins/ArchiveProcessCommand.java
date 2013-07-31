@@ -3,7 +3,6 @@ package de.intranda.goobi.plugins;
 import java.io.File;
 import java.util.HashMap;
 
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,10 +15,12 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.intranda.goobi.archiving.Archiver;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Export.download.ExportMets;
-import de.sub.goobi.Persistence.ProzessDAO;
+
+import org.goobi.beans.Process;
+
+import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
@@ -110,7 +111,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 			}
 		}
 		
-		Prozess p = null;
+		Process p = null;
 		File processDir = null;
 		File origImagesDir = null;
 //		Session session = HibernateUtilOld.getSessionFactory().openSession();
@@ -121,7 +122,7 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		try {
 			//get Process data
 			
-			p = new ProzessDAO().get(Integer.valueOf(parameterMap.get("processId")));
+			p =ProcessManager.getProcessById(Integer.valueOf(parameterMap.get("processId")));
 //			p = dao.get(Integer.valueOf(parameterMap.get("processId")));
 			processDir = new File(p.getProcessDataDirectory());
 			origImagesDir = new File(p.getImagesOrigDirectory(true));

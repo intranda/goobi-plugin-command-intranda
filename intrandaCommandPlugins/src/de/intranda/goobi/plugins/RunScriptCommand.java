@@ -10,15 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
+import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
+import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.persistence.managers.StepManager;
 
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
+
+
 
 
 @PluginImplementation
@@ -74,12 +76,12 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		String scriptname = this.parameterMap.get("scriptname");
 		try {
 			int id = Integer.parseInt(stepId);
-			StepObject step = StepManager.getStepById(id);
+			Step step = StepManager.getStepById(id);
 //			Schritt step = new SchrittDAO().get(id);
-			HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+			HelperSchritte hs = new HelperSchritte();
 
 			if (scriptname != null && scriptname.length() > 0) {
-				Map<String,String> scripts = StepManager.loadScriptMap(id);
+				Map<String,String> scripts = step.getAllScripts();
 				if (scripts.containsKey(scriptname)) {
 					String script = scripts.get(scriptname);
 					

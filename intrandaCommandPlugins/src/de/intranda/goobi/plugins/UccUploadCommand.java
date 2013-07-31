@@ -15,14 +15,15 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
 import de.schlichtherle.io.File;
 import de.schlichtherle.io.FileOutputStream;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.HibernateUtilOld;
+
+import org.goobi.beans.Process;
+
 //import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class UccUploadCommand implements ICommandPlugin, IPlugin {
@@ -94,7 +95,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 
 		Integer processId = Integer.parseInt(parameterMap.get("processId"));
-		Session session = HibernateUtilOld.getSessionFactory().openSession();
+
 		File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
 		OutputStream out = null;
 		try {
@@ -107,7 +108,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			}
 			out.flush();
 
-			Prozess process = (Prozess) session.get(Prozess.class, processId);
+			Process process = ProcessManager.getProcessById(processId);
 			File metaDest = new File(process.getMetadataFilePath());
 			File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
@@ -125,7 +126,6 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			 return new CommandResponse(500, title, message);
 //			return new CommandResponse(title, message);
 		} finally {
-			session.close();
 			if (out != null) {
 				try {
 					out.close();

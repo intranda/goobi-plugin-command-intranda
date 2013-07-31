@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
+import org.goobi.beans.Step;
+import org.goobi.beans.Process;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -16,13 +18,11 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
-import de.sub.goobi.Persistence.apache.ProcessManager;
-import de.sub.goobi.Persistence.apache.ProcessObject;
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
+import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.helper.ShellScript;
+import de.sub.goobi.persistence.managers.StepManager;
 
 
 @PluginImplementation
@@ -88,10 +88,10 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 		Integer id = Integer.parseInt(this.parameterMap.get("stepId"));
 		logger.debug("closing step with id " + id);
-		StepObject so = StepManager.getStepById(id);
+		Step so = StepManager.getStepById(id);
 		if (so.getValidationPlugin() != null && so.getValidationPlugin().length() >0) {
 			IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, so.getValidationPlugin());
-			ivp.setStepObject(so);
+			ivp.setStep(so);
 			if (!ivp.validate()) {
 				String title = "Error during execution";
 				String message = "Step not closed, validation failed";
@@ -99,17 +99,17 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 			}
 		}
 		logger.debug("loaded StepObject with id " + so.getId());
-		HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+		HelperSchritte hs = new HelperSchritte();
 		hs.CloseStepObjectAutomatic(so);	
 		
 		// try to remove symlink from user home 
 		if (parameterMap.get("username") != null && parameterMap.get("username").length() > 0) {
 			String homeDir = ConfigMain.getParameter("dir_Users");
 			String username = parameterMap.get("username");
-			ProcessObject po = ProcessManager.getProcessObjectForId(so.getProcessId());
+			Process po = so.getProzess();
 			String nach = homeDir + username + "/";
 			
-			nach += po.getTitle() + " [" + po.getId() + "]";
+			nach += po.getTitel() + " [" + po.getId() + "]";
 
 			/* Leerzeichen maskieren */
 			nach = nach.replaceAll(" ", "__");
@@ -120,7 +120,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 			// myLogger.debug(command);
 
 			try {
-				Helper.callShell2(command);
+			    ShellScript.legacyCallShell2(command);
 			} catch (java.io.IOException ioe) {
 				logger.error("IOException UploadFromHome", ioe);
 				String title = "Error during execution";

@@ -13,14 +13,14 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.beans.User;
+import org.goobi.beans.Usergroup;
+import org.goobi.beans.Process;
+import org.goobi.beans.Step;
 
-import de.sub.goobi.Beans.Benutzer;
-import de.sub.goobi.Beans.Benutzergruppe;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
@@ -90,18 +90,17 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 		// session.reconnect(con);
 		// }
 		try {
-			ProzessDAO dao = new ProzessDAO();
-			Prozess p = dao.get(id);
-			for (Schritt step : p.getSchritteList()) {
+			Process p = ProcessManager.getProcessById(id);
+			for (Step step : p.getSchritteList()) {
 				WebDav myDav = new WebDav();
-				for (Benutzer b : step.getBenutzerList()) {
+				for (User b : step.getBenutzerList()) {
 					try {
 						myDav.UploadFromHome(b, p);
 					} catch (RuntimeException e) {
 					}
 				}
-				for (Benutzergruppe bg : step.getBenutzergruppenList()) {
-					for (Benutzer b : bg.getBenutzerList()) {
+				for (Usergroup bg : step.getBenutzergruppenList()) {
+					for (User b : bg.getBenutzer()) {
 						try {
 							myDav.UploadFromHome(b, p);
 						} catch (RuntimeException e) {
@@ -111,7 +110,8 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
 			}
 
 			Helper.deleteDir(new File(p.getProcessDataDirectory()));
-			dao.remove(id);
+			ProcessManager.deleteProcess(p);
+			
 
 		} catch (Exception e) {
 			logger.error(e);

@@ -12,10 +12,10 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.beans.Process;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Export.dms.ExportDms;
-import de.sub.goobi.Persistence.ProzessDAO;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 
 @PluginImplementation
@@ -97,7 +97,7 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
 
 		try {
 			
-			Prozess source = new ProzessDAO().get(id);
+			Process source = ProcessManager.getProcessById(id);
 //			ProzessDAO dao = new ProzessDAO();
 //			Prozess p = dao.get(id);
 			ExportDms export = new ExportDms(images);

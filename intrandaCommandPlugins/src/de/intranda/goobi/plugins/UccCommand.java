@@ -15,12 +15,14 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+
 import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
-//import de.sub.goobi.Persistence.ProzessDAO;
+
+import org.goobi.beans.Process;
+
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class UccCommand implements ICommandPlugin, IPlugin {
@@ -99,7 +101,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 //		}
 		try {
 
-			Prozess process = new ProzessDAO().get(processId);
+			Process process = ProcessManager.getProcessById(processId);
 
 			File meta = new File(process.getMetadataFilePath());
 			File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
