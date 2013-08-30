@@ -36,12 +36,10 @@
 			<include name="*.jar" />
 		</fileset>
 	</path
-
-	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
-		<classpath refid="pmd.classpath">
-		</classpath>
-	</taskdef>
 -->
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+	</taskdef>
+
 	
 	<tstamp>
 		<format property="tstamped-file-name" pattern="yyyy-MM-dd" locale="en,UK" />
