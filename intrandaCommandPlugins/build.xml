@@ -9,8 +9,10 @@
 	     ================================= -->
 	<property name="filename" value="intrandaCommandPlugins" />
 	<property name="dir.build" value="bin" />
+	<property name="dir.src" value="src" />
 	<property name="dir.test" value="test/src" />
 	<property name="dir.deploy" value="deploy" />
+	<property name="dir.javadoc" value="doc" />
 	<property name="pluginFolderWin" value="C:/Goobi/plugins/command/" />
 	<property name="pluginFolderUnix" value="/opt/digiverso/goobi/plugins/command/" />
 
@@ -49,7 +51,7 @@
 		<echo>Creating needed directories...</echo>
 		<mkdir dir="${dir.build}" />
 		<mkdir dir="${dir.deploy}" />
-		<mkdir dir="testreports"/>
+		<mkdir dir="testreports" />
 
 	</target>
 
@@ -177,9 +179,18 @@
 
 	</target>
 
-
 	<target name="javadoc">
-		<javadoc sourcepath="src" destdir="doc" />
+		<delete dir="${dir.javadoc}" />
+		<mkdir dir="${dir.javadoc}" />
+		<!-- create javadocs -->
+		<javadoc destdir="${dir.javadoc}" sourcepath="${dir.src}" Author="true" version="true" Use="true" noindex="true" Windowtitle="intranda
+	Licenceserver JavaDoc References" 
+			Doctitle="intranda Plugin JavaDoc References" bottom="Copyright 2013, inranda GmbH" encoding="UTF8">
+			<classpath>
+				<pathelement location="${dir.build}" />
+				
+			</classpath>
+		</javadoc>
 	</target>
 
 	<target name="junit" depends="clean, createDirs, compile">
@@ -187,8 +198,8 @@
 		<javac destdir="${dir.build}" includeantruntime="false" debug="true">
 			<classpath refid="classpath-test" />
 			<compilerarg value="-Xlint" />
-			<src path="test/src" />
-			<src path="src" />
+			<src path="${dir.test}" />
+			<src path="${dir.src}" />
 		</javac>
 
 
@@ -198,7 +209,7 @@
 			<formatter type="xml" usefile="true" />
 			<test name="de.intranda.goobi.AllTests" todir="testreports" />
 		</junit>
-	
+
 
 	</target>
 
