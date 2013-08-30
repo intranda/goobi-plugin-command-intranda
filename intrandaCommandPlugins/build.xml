@@ -35,15 +35,15 @@
 		<fileset dir="${dir.pmd}">
 			<include name="*.jar" />
 		</fileset>
-	</path-->
+	</path
 
 	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
 		<classpath refid="pmd.classpath">
 		</classpath>
 	</taskdef>
-
+-->
+	
 	<tstamp>
-
 		<format property="tstamped-file-name" pattern="yyyy-MM-dd" locale="en,UK" />
 	</tstamp>
 
@@ -238,12 +238,6 @@
 		<antcall target="copyToPluginFolder" />
 		<echo>intranda... alles ist gut!</echo>
 	</target>
-
-	<!--
-	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" > 
-	    <classpath refid="classpath-pmd" /> 
-	</taskdef> 
--->
 
 	<target name="pmd">
 		<pmd>
