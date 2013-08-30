@@ -15,7 +15,7 @@
 	<property name="dir.javadoc" value="doc" />
 	<property name="pluginFolderWin" value="C:/Goobi/plugins/command/" />
 	<property name="pluginFolderUnix" value="/opt/digiverso/goobi/plugins/command/" />
-	<!--property name="dir.pmd" value="/opt/digiverso/pmd" /-->
+	<property name="dir.pmd" value="/opt/pmd" />
 
 
 	<path id="classpath">
@@ -31,13 +31,13 @@
 		<pathelement location="/opt/digiverso/junit/hamcrest-all-1.3.jar" />
 	</path>
 
-	<!--path id="pmd.classpath">
+	<path id="pmd.classpath">
 		<fileset dir="${dir.pmd}">
 			<include name="*.jar" />
 		</fileset>
-	</path
--->
-	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+	</path>
+
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath">
 	</taskdef>
 
 	
