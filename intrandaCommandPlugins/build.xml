@@ -174,7 +174,7 @@
 	     ================================= -->
 
 	<!-- Run all targets in appropiate order for clean compile-->
-	<target name="dist" depends="jar.runnable, javadoc, junit" description="Creating everything for Jenkins.">
+	<target name="dist" depends="javadoc, junit, jar.runnable" description="Creating everything for Jenkins.">
 
 
 	</target>
@@ -184,9 +184,8 @@
 		<mkdir dir="${dir.javadoc}" />
 		<!-- create javadocs -->
 		<javadoc destdir="${dir.javadoc}" sourcepath="${dir.src}" Author="true" version="true" Use="true" noindex="true" Windowtitle="intranda
-	Licenceserver JavaDoc References" 
-			Doctitle="intranda Plugin JavaDoc References" bottom="Copyright 2013, inranda GmbH" encoding="UTF8">
-			<classpath  refid="classpath">
+	Licenceserver JavaDoc References" Doctitle="intranda Plugin JavaDoc References" bottom="Copyright 2013, inranda GmbH" encoding="UTF8">
+			<classpath refid="classpath">
 			</classpath>
 		</javadoc>
 	</target>
