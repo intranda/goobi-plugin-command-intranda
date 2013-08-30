@@ -9,14 +9,24 @@
 	     ================================= -->
 	<property name="filename" value="intrandaCommandPlugins" />
 	<property name="dir.build" value="bin" />
+	<property name="dir.test" value="test/src" />
 	<property name="dir.deploy" value="deploy" />
 	<property name="pluginFolderWin" value="C:/Goobi/plugins/command/" />
 	<property name="pluginFolderUnix" value="/opt/digiverso/goobi/plugins/command/" />
 
 	<path id="classpath">
-		<fileset dir="/opt/digiverso/goobilibs/lib"/> 
+		<fileset dir="/opt/digiverso/goobilibs/lib" />
 		<fileset dir="/opt/digiverso/libs" />
 	</path>
+
+	<path id="classpath-test">
+		<fileset dir="/opt/digiverso/goobilibs/lib" />
+		<fileset dir="/opt/digiverso/libs" />
+		<pathelement location="${dir.build}" />
+		<pathelement location="/opt/digiverso/junit/junit.jar" />
+		<pathelement location="/opt/digiverso/junit/hamcrest-all-1.3.jar" />
+	</path>
+
 
 	<tstamp>
 		<format property="tstamped-file-name" pattern="yyyy-MM-dd" locale="en,UK" />
@@ -31,6 +41,7 @@
 		<echo>Cleaning up workspace...</echo>
 		<!--<delete dir="${dir.build}" />-->
 		<delete dir="${dir.deploy}" />
+
 	</target>
 
 	<!-- Create needed directories -->
@@ -38,6 +49,8 @@
 		<echo>Creating needed directories...</echo>
 		<mkdir dir="${dir.build}" />
 		<mkdir dir="${dir.deploy}" />
+		<mkdir dir="testreports"/>
+
 	</target>
 
 	<!-- Store git revision in internal variable -->
@@ -78,20 +91,8 @@
          Compile the sources
 	     ================================= -->
 
-	<target name="compile-jenkins" if="${jenkins}">
+	<target name="compile">
 		<echo>Using jenkins compiler</echo>
-		<javac destdir="${dir.build}" includeantruntime="false" debug="true">
-			<classpath refid="classpath" />
-			<compilerarg value="-Xlint" />
-			<src path="src" />
-			<!--			<src path="../Goobi/WEB-INF/src" /> -->
-<!--		<src path="../Goobi/src" />
-			<src path="../Goobi/src-dubious" />			-->
-		</javac>
-	</target>
-
-	<target name="compile-eclipse" unless="jenkins">
-		<echo>Using eclipse compiler</echo>
 		<javac destdir="${dir.build}" includeantruntime="false" debug="true">
 			<classpath refid="classpath" />
 			<compilerarg value="-Xlint" />
@@ -125,17 +126,7 @@
          Compile the jar
 	     ================================= -->
 
-	<target name="jar-jenkins" if="jenkins">
-		<jar destfile="${dir.deploy}/${filename}-${git.revision}.jar">
-			<manifest>
-				<attribute name="Main-Class" value="de.intranda.goobi.PluginInfo" />
-				<attribute name="Class-Path" value="${libs.project}" />
-			</manifest>
-			<fileset dir="bin" />
-		</jar>
-	</target>
-
-	<target name="jar-eclipse" unless="jenkins">
+	<target name="jar">
 		<jar destfile="${dir.deploy}/${filename}-${git.revision}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="de.intranda.goobi.PluginInfo" />
@@ -151,8 +142,7 @@
 
 	<target name="jar.runnable" depends="git.revision">
 		<echo>Compile sources ...</echo>
-		<antcall target="compile-jenkins" />
-		<antcall target="compile-eclipse" />
+		<antcall target="compile" />
 
 		<echo>Generate Plugin list</echo>
 		<pathconvert property="plugins.project" pathsep=" ">
@@ -174,8 +164,7 @@
 		<echo file="${dir.build}/de/intranda/goobi/plugins.txt">${plugins.project}  -----------------------------------------------------  Git-revision: ${git.revision}</echo>
 
 		<echo>Generating jar file: ${dir.deploy}/${filename}-${git.revision}.jar</echo>
-		<antcall target="jar-jenkins" />
-		<antcall target="jar-eclipse" />
+		<antcall target="jar" />
 	</target>
 
 	<!-- ================================= 
@@ -183,14 +172,42 @@
 	     ================================= -->
 
 	<!-- Run all targets in appropiate order for clean compile-->
-	<target name="dist" depends="clean, createDirs, git.revision, jar.runnable" description="Creating everything for Jenkins." />
+	<target name="dist" depends="jar.runnable, javadoc, junit" description="Creating everything for Jenkins.">
+
+
+	</target>
+
+
+	<target name="javadoc">
+		<javadoc sourcepath="src" destdir="doc" />
+	</target>
+
+	<target name="junit" depends="clean, createDirs, compile">
+
+		<javac destdir="${dir.build}" includeantruntime="false" debug="true">
+			<classpath refid="classpath-test" />
+			<compilerarg value="-Xlint" />
+			<src path="test/src" />
+			<src path="src" />
+		</javac>
+
+
+
+		<junit haltonerror="true" haltonfailure="true">
+			<classpath refid="classpath-test" />
+			<formatter type="xml" usefile="true" />
+			<test name="de.intranda.goobi.AllTests" todir="testreports" />
+		</junit>
+	
+
+	</target>
 
 	<!-- ================================= 
                   DEPLOY
 	     ================================= -->
 
 	<!-- Default target that compiles the jar from eclipse and copies it to the right folder depending on operating system-->
-	<target name="deploy" depends="jar.runnable" description="Default target for Eclipse compiling with correct deployment">
+	<target name="deploy" depends="junit, javadoc, jar.runnable" description="Default target for Eclipse compiling with correct deployment">
 		<condition property="isWindows">
 			<os family="windows" />
 		</condition>
