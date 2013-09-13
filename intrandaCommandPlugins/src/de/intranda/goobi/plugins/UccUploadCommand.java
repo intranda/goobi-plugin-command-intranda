@@ -117,8 +117,8 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
             logger.trace("metadata file is " + metaDest.getAbsolutePath());
             File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
-            File metaSource = new File(archive, "meta.xml");
-            File anchorSource = new File(archive, "meta_anchor.xml");
+            File metaSource = new File(archive + "/meta.xml");
+            File anchorSource = new File(archive + "/meta_anchor.xml");
             metaSource.copyTo(metaDest);
             logger.trace("metadata file is overwritten");
             if (anchorSource.exists()) {
