@@ -21,21 +21,21 @@ public class CloseStepByProcessIdCommandTest {
         ICommandPlugin ip = new CloseStepByProcessIdCommand();
         assertEquals(ip.getTitle(), "closeStepByProcessId");
     }
-    
+
     @Test
     public void testGetDescription() {
         ICommandPlugin ip = new CloseStepByProcessIdCommand();
         assertEquals(ip.getDescription(), "closeStepByProcessId");
     }
-    
-    
+
     @Test
     public void testParameterMap() {
         HashMap<String, String> parameter = new HashMap<String, String>();
         parameter.put("key", "value");
         ICommandPlugin ip = new CloseStepByProcessIdCommand();
         ip.setParameterMap(parameter);
-        fail();
+        assertNotNull(ip.validate());
+
     }
-    
+
 }
