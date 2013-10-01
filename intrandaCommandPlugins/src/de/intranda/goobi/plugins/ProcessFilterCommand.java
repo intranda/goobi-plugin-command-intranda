@@ -74,7 +74,7 @@ public class ProcessFilterCommand implements ICommandPlugin, IPlugin {
             filter = "";
         }
         try {
-            String sql = FilterHelper.criteriaBuilder(filter, false, null, null, true, false);
+        	String sql = FilterHelper.criteriaBuilder(filter, false, null, null, null, false, false);
             myIds = ProcessManager.getIDList(sql);
 
             String answer = "";
