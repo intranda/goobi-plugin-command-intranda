@@ -81,8 +81,8 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
             }
         }
 
-        try {
-        	String sql = FilterHelper.criteriaBuilder(filter, false, stepOpenOnly, false, false, true, true);
+        try {            
+        	String sql = FilterHelper.criteriaBuilder(filter, false, stepOpenOnly, false, false, false, true);
             myIds = StepManager.getIDList(sql);
 
             String answer = "";
