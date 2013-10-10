@@ -96,7 +96,7 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 			HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
 
 			if (scriptname != null && scriptname.length() > 0) {
-				Map<String,String> scripts = StepManager.loadScriptMap(id);
+				Map<String,String> scripts = StepManager.loadScriptMap(step.getId());
 				if (scripts.containsKey(scriptname)) {
 					String script = scripts.get(scriptname);
 					hs.executeScriptForStepObject(step, script, false);					
