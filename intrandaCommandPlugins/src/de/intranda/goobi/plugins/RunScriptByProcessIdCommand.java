@@ -76,7 +76,7 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 		String processId = this.parameterMap.get("processId");
 		String stepName = this.parameterMap.get("stepName");
-		String scriptname = this.parameterMap.get("scriptname");
+		String scriptname = this.parameterMap.get("scriptName");
 		try {
 			int id = Integer.parseInt(processId);
 			List<StepObject> stepList = StepManager.getStepsForProcess(id);
@@ -125,11 +125,11 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command runScript";
+		String title = "Command runScriptByProcessId";
 		String message = "This command calls scripts for a given task.";
 		message += "\n - 'processId' defines the id of the process.";
 		message += "\n - 'stepName' defines the name of task.";
-		message += "\n - 'scriptname' is optional and defines a script to call. If no script is defined, all scripts of the task gets started.";
+		message += "\n - 'scriptName' is optional and defines a script to call. If no script is defined, all scripts of the task gets started.";
 		return new CommandResponse(200,title, message);
 	}
 
