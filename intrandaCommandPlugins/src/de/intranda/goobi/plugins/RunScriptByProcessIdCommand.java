@@ -77,7 +77,7 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 	public CommandResponse execute() {
 		String processId = this.parameterMap.get("processId");
 		String stepName = this.parameterMap.get("stepName");
-		String scriptname = this.parameterMap.get("scriptname");
+		String scriptname = this.parameterMap.get("scriptName");
 		try {
 			int id = Integer.parseInt(processId);
 			List<Step> stepList = StepManager.getStepsForProcess(id);
