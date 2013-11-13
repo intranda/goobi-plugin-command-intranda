@@ -25,6 +25,7 @@ import de.sub.goobi.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.managers.HistoryManager;
 import de.sub.goobi.persistence.managers.ProcessManager;
 import de.sub.goobi.persistence.managers.StepManager;
 
@@ -152,10 +153,9 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
 
                 StepManager.saveStep(temp);
                 // dao.save(temp);
+                HistoryManager.addHistory(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(),
+                        HistoryEventType.stepError.getValue(), temp.getProzess().getId());
 
-                source.getProzess().getHistory()
-                        .add(new HistoryEvent(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError, temp
-                                .getProzess()));
                 /*
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
                  */

@@ -259,24 +259,11 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 							newStep.setBearbeitungsstatusEnum(oldStep.getBearbeitungsstatusEnum());
 							newStep.setBearbeitungsbenutzer(oldStep.getBearbeitungsbenutzer());
 							newStep.setBearbeitungsende(oldStep.getBearbeitungsende());
-							p.getHistory().add(
-									new HistoryEvent(oldStep.getBearbeitungsende(), new Double(oldOrderNumber + 1).doubleValue(), newStep.getTitel(),
-											HistoryEventType.stepDone, p));
 						} else {
 							newStep.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 						}
 						p.getSchritte().add(newStep);
 						added = true;
-					} else {
-						oldStep.setReihenfolge(oldOrderNumber + 1);
-						List<HistoryEvent> history = p.getHistoryList();
-						for (HistoryEvent e : history) {
-							if (e.getStringValue() != null && e.getStringValue().equals(oldStep.getTitel())) {
-								if (e.getNumericValue() != null && e.getNumericValue() == new Double(oldOrderNumber)) {
-									e.setNumericValue(new Double(oldOrderNumber + 1));
-								}
-							}
-						}
 					}
 				}
 			}
