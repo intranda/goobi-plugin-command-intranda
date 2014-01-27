@@ -112,9 +112,8 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			File metaDest = new File(process.getMetadataFilePath());
 			File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
-			File metaSource = new File(archive, "meta.xml");
-			File anchorSource = new File(archive, "meta_anchor.xml");
-
+            File metaSource = new File(archive + "/meta.xml");
+            File anchorSource = new File(archive + "/meta_anchor.xml");
 			metaSource.copyTo(metaDest);
 			if (anchorSource.exists()) {
 				anchorSource.copyTo(anchorDest);
