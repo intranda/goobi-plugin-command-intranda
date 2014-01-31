@@ -99,6 +99,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 		logger.debug("created temporary file " + archive.getAbsolutePath());
 		if (archive.exists()) {
 			logger.debug("File " + archive.getAbsolutePath() + " does exist already. Try to delete it.");
+			System.gc();
 			boolean deleted = archive.delete();
 			if (deleted) {
 				logger.debug("File " + archive.getAbsolutePath() + " deleted.");
