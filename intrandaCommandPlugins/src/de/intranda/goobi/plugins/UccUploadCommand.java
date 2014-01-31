@@ -95,7 +95,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 		Integer processId = Integer.parseInt(parameterMap.get("processId"));
 		logger.debug("process id is " + processId);
 		logger.debug("get hibernate session");
-		File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
+		File archive = new File(ConfigMain.getParameter("tempfolder"), processId + "_" + System.currentTimeMillis() + ".zip");
 		logger.debug("created temporary file " + archive.getAbsolutePath());
 		if (archive.exists()) {
 			logger.debug("File " + archive.getAbsolutePath() + " does exist already. Try to delete it.");
