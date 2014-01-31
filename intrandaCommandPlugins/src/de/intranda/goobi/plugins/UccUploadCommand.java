@@ -127,6 +127,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
 			logger.debug("loaded process " + process.getTitel());
 			File metaDest = new File(process.getMetadataFilePath());
+			metaDest.renameTo(new File(process.getMetadataFilePath() + ".ucc." + System.currentTimeMillis()));
 			logger.debug("metadata file is " + metaDest.getAbsolutePath());
 			File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
@@ -136,7 +137,8 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			logger.debug("metadata file is overwritten");
 			if (anchorSource.exists()) {
 				logger.debug("anchor file exist");
-				anchorSource.copyTo(anchorDest);
+				anchorDest.renameTo(new File(process.getMetadataFilePath() + "." + System.currentTimeMillis()));
+				anchorSource.copyTo(new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml.ucc." + System.currentTimeMillis())));
 				logger.debug("anchor file is overwritten");
 			}
 		} catch (Exception e) {
