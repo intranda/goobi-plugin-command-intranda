@@ -108,11 +108,12 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			}
 		}
 
+		InputStream in = null;
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(archive);
 			logger.debug("write to temporay file");
-			InputStream in = request.getInputStream();
+			in = request.getInputStream();
 			logger.debug("read request input stream");
 			int numRead;
 			byte[] buf = new byte[4096];
@@ -120,6 +121,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 				out.write(buf, 0, numRead);
 			}
 			out.flush();
+		
 			logger.debug("finished data import");
 			Process process = ProcessManager.getProcessById(processId);
 
@@ -148,6 +150,14 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 			if (out != null) {
 				try {
 					out.close();
+				} catch (IOException e) {
+					logger.error(e);
+				}
+			}
+			
+			if (in != null) {
+				try {
+					in.close();
 				} catch (IOException e) {
 					logger.error(e);
 				}
