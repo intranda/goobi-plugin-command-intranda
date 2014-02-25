@@ -155,7 +155,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
             File destination = new File(viewerFolder, filename);
             try {
                 out = new FileOutputStream(destination);
-                logger.debug("write to temporay file");
+                logger.debug("write to temporay file " + destination.getAbsolutePath());
                 InputStream in = request.getInputStream();
                 logger.debug("read request input stream");
                 int numRead;
@@ -166,6 +166,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
                 out.flush();
 
             } catch (Exception e) {
+                logger.debug(e);
                 logger.error(e);
                 String title = "Error during execution";
                 String message = "An error occured: " + e.getMessage();
@@ -182,7 +183,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
                 }
             }
         }
-        return null;
+        return new CommandResponse("Import finished", "Import finished");
     }
 
     @Override
