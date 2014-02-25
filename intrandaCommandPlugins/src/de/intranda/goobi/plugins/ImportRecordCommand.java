@@ -25,7 +25,7 @@ import ugh.dl.Prefs;
 
 import org.goobi.beans.Process;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
@@ -127,7 +127,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Prefs prefs = template.getRegelsatz().getPreferences();
 			logger.debug("ruleset is " + template.getRegelsatz().getDatei());
-			String tempfolder = ConfigMain.getParameter("tempfolder");
+			String tempfolder = ConfigurationHelper.getInstance().getTemporaryFolder();
 			logger.debug("tempfolder is : " + tempfolder);
 			wmi.setImportFolder(tempfolder);
 			wmi.setPrefs(prefs);

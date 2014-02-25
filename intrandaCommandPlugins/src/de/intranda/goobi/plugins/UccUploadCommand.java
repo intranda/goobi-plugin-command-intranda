@@ -21,7 +21,7 @@ import de.schlichtherle.io.FileOutputStream;
 
 import org.goobi.beans.Process;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
@@ -95,7 +95,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
         Integer processId = Integer.parseInt(parameterMap.get("processId"));
         logger.debug("process id is " + processId);
         logger.debug("get hibernate session");
-        File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
+        File archive = new File(ConfigurationHelper.getInstance().getTemporaryFolder(), processId + ".zip");
         logger.debug("created temporary file " + archive.getAbsolutePath());
         OutputStream out = null;
         try {

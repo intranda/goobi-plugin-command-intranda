@@ -22,7 +22,7 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import de.sub.goobi.persistence.managers.ProcessManager;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.ShellScript;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -106,7 +106,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
                 if (so.getBearbeitungsstatusEnum().equals(StepStatus.OPEN) || so.getBearbeitungsstatusEnum().equals(StepStatus.INWORK)) {
                     boolean valid = true;
                     String message = "Step not closed";
-                    if (so.isTypMetadaten() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+                    if (so.isTypMetadaten() && ConfigurationHelper.getInstance().isUseMetadataValidation()) {
                         MetadatenVerifizierung mv = new MetadatenVerifizierung();
 
                         mv.setAutoSave(true);
@@ -148,7 +148,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
 
                         // try to remove symlink from user home 
                         if (parameterMap.get("username") != null && parameterMap.get("username").length() > 0) {
-                            String homeDir = ConfigMain.getParameter("dir_Users");
+                            String homeDir = ConfigurationHelper.getInstance().getUserFolder();
                             String username = parameterMap.get("username");
 
                             String nach = homeDir + username + "/";
@@ -159,7 +159,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
                             nach = nach.replaceAll(" ", "__");
                             File benutzerHome = new File(nach);
 
-                            String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
+                            String command = ConfigurationHelper.getInstance().getScriptDeleteSymLink() + " ";
                             command += benutzerHome;
                             // myLogger.debug(command);
 

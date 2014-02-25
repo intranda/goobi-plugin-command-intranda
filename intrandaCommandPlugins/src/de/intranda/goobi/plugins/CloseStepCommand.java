@@ -18,7 +18,7 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.ShellScript;
@@ -104,7 +104,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		
 		// try to remove symlink from user home 
 		if (parameterMap.get("username") != null && parameterMap.get("username").length() > 0) {
-			String homeDir = ConfigMain.getParameter("dir_Users");
+			String homeDir = ConfigurationHelper.getInstance().getUserFolder();
 			String username = parameterMap.get("username");
 			Process po = so.getProzess();
 			String nach = homeDir + username + "/";
@@ -115,7 +115,7 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 			nach = nach.replaceAll(" ", "__");
 			File benutzerHome = new File(nach);
 
-			String command = ConfigMain.getParameter("script_deleteSymLink") + " ";
+			String command = ConfigurationHelper.getInstance().getScriptDeleteSymLink() + " ";
 			command += benutzerHome;
 			// myLogger.debug(command);
 
