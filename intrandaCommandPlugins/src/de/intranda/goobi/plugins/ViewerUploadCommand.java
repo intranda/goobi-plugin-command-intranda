@@ -88,10 +88,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         List<Process> processList =
                 ProcessManager.getProcesses("prozesse.titel", " prozesse.titel like '%" + MySQLHelper.escapeString(processtitle) + "%'");
         boolean secondSearch = false;
-        logger.debug("Found " + processList.size() + " processes");
-        for (Process p : processList) {
-            logger.debug(p.getTitel());
-        }
+
         if (processList.isEmpty()) {
             logger.debug("Found no process with title " + processtitle + ", searching for property with that value.");
             secondSearch = true;
@@ -188,7 +185,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
 
     @Override
     public CommandResponse help() {
-        String title = "Command viewer_upload";
+        String title = "Command viewer_update";
         String message = "This command accepts files from intranda viewer and save the data to a process.";
         message +=
                 "\n The parameter 'process' defines to which process the file belongs."
