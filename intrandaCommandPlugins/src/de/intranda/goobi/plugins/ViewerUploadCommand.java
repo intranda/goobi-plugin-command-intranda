@@ -86,8 +86,12 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         logger.debug("Import data for process with title " + processtitle);
 
         List<Process> processList =
-                ProcessManager.getProcesses("prozesse.titel", " prozesse.titel like '%'" + MySQLHelper.escapeString(processtitle) + "'");
+                ProcessManager.getProcesses("prozesse.titel", " prozesse.titel like '%" + MySQLHelper.escapeString(processtitle) + "%'");
         boolean secondSearch = false;
+        logger.debug("Found " + processList.size() + " processes");
+        for (Process p : processList) {
+            logger.debug(p.getTitel());
+        }
         if (processList.isEmpty()) {
             logger.debug("Found no process with title " + processtitle + ", searching for property with that value.");
             secondSearch = true;
@@ -101,7 +105,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
                             .getProcesses(
                                     "prozesse.titel",
                                     "p.titel from prozesse p, werkstuecke w, werkstueckeeigenschaften we where p.ProzesseID = w.ProzesseID and w.werkstueckeID = we.werkstueckeID and we.WERT LIKE '%"
-                                            + MySQLHelper.escapeString(processtitle) + "'");
+                                            + MySQLHelper.escapeString(processtitle) + "%'");
         }
 
         if (processList.isEmpty()) {
@@ -109,7 +113,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
             String value = "Found no process with title " + processtitle;
             logger.error(value);
             return new CommandResponse(500, title, value);
-        } else if (processList.size() > 0) {
+        } else if (processList.size() > 1) {
             String title = "SEARCH ERROR";
             String value = "Found more than one process with title " + processtitle;
             logger.error(value);
