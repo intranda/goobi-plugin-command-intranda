@@ -88,55 +88,152 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
         return null;
     }
+//
+//    @Override
+//    public CommandResponse execute() {
+//        logger.trace("Execute UccUpload");
+//        Integer processId = Integer.parseInt(parameterMap.get("processId"));
+//        logger.trace("process id is " + processId);
+//        Session session = HibernateUtilOld.getSessionFactory().openSession();
+//        logger.trace("get hibernate session");
+//        File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
+//        logger.trace("created temporary file " + archive.getAbsolutePath());
+//        OutputStream out = null;
+//        try {
+//            out = new FileOutputStream(archive);
+//            logger.trace("write to temporay file");
+//            InputStream in = request.getInputStream();
+//            logger.trace("read request input stream");
+//            int numRead;
+//            byte[] buf = new byte[4096];
+//            while ((numRead = in.read(buf)) >= 0) {
+//                out.write(buf, 0, numRead);
+//            }
+//            out.flush();
+//        } catch (FileNotFoundException e) {
+//            logger.error(e);
+//            String title = "Error during execution";
+//            String message = "An error occured: " + e.getMessage();
+//            return new CommandResponse(500, title, message);
+//        } catch (IOException e) {
+//            logger.error(e);
+//            String title = "Error during execution";
+//            String message = "An error occured: " + e.getMessage();
+//            return new CommandResponse(500, title, message);
+//        } finally {
+//            if (out != null) {
+//                try {
+//                    out.close();
+//                } catch (IOException e) {
+//                    logger.error(e);
+//                }
+//            }
+//        }
+//        try {
+//            logger.trace("finished data import");
+//            Prozess process = (Prozess) session.get(Prozess.class, processId);
+//            logger.trace("loaded process " + process.getTitel());
+//            File metaDest = new File(process.getMetadataFilePath());
+//            logger.trace("metadata file is " + metaDest.getAbsolutePath());
+//            File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
+//            File metaSource = new File(archive + "/meta.xml");
+//            File anchorSource = new File(archive + "/meta_anchor.xml");
+//            metaSource.copyTo(metaDest);
+//            logger.trace("metadata file is overwritten");
+//            if (anchorSource.exists()) {
+//                logger.trace("anchor file exist");
+//                anchorSource.copyTo(anchorDest);
+//                logger.trace("anchor file is overwritten");
+//            }
+//        } catch (Exception e) {
+//            logger.error(e);
+//            String title = "Error during execution";
+//            String message = "An error occured: " + e.getMessage();
+//            return new CommandResponse(500, title, message);
+//            //			return new CommandResponse(title, message);
+//        } finally {
+//            session.close();
+//
+//        }
+//
+//        String title = "Command executed";
+//        String message = "Message to process log added";
+//        return new CommandResponse(200, title, message);
+//        //		return new CommandResponse(title, message);
+//    }
 
-    @Override
     public CommandResponse execute() {
-        logger.trace("Execute UccUpload");
+        logger.debug("Execute UccUpload");
         Integer processId = Integer.parseInt(parameterMap.get("processId"));
-        logger.trace("process id is " + processId);
+        logger.debug("process id is " + processId);
+        logger.debug("get hibernate session");
         Session session = HibernateUtilOld.getSessionFactory().openSession();
-        logger.trace("get hibernate session");
+        
         File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
-        logger.trace("created temporary file " + archive.getAbsolutePath());
+        logger.debug("created temporary file " + archive.getAbsolutePath());
+        if (archive.exists()) {
+            logger.debug("File " + archive.getAbsolutePath() + " does exist already. Try to delete it.");
+            System.gc();
+            boolean deleted = archive.delete();
+            if (deleted) {
+                logger.debug("File " + archive.getAbsolutePath() + " deleted.");
+            } else {
+                logger.error("File " + archive.getAbsolutePath() + " could not be deleted.");
+            }
+        }
+
+        InputStream in = null;
         OutputStream out = null;
         try {
             out = new FileOutputStream(archive);
-            logger.trace("write to temporay file");
-            InputStream in = request.getInputStream();
-            logger.trace("read request input stream");
+            logger.debug("write to temporay file");
+            in = request.getInputStream();
+            logger.debug("read request input stream");
             int numRead;
             byte[] buf = new byte[4096];
             while ((numRead = in.read(buf)) >= 0) {
                 out.write(buf, 0, numRead);
             }
             out.flush();
-            logger.trace("finished data import");
+            logger.debug("finished data import");
             Prozess process = (Prozess) session.get(Prozess.class, processId);
-            logger.trace("loaded process " + process.getTitel());
+
+            logger.debug("loaded process " + process.getTitel());
             File metaDest = new File(process.getMetadataFilePath());
-            logger.trace("metadata file is " + metaDest.getAbsolutePath());
+            metaDest.renameTo(new File(process.getMetadataFilePath() + ".ucc." + System.currentTimeMillis()));
+            logger.debug("metadata file is " + metaDest.getAbsolutePath());
             File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
 
             File metaSource = new File(archive + "/meta.xml");
             File anchorSource = new File(archive + "/meta_anchor.xml");
             metaSource.copyTo(metaDest);
-            logger.trace("metadata file is overwritten");
+            logger.debug("metadata file is overwritten");
             if (anchorSource.exists()) {
-                logger.trace("anchor file exist");
-                anchorSource.copyTo(anchorDest);
-                logger.trace("anchor file is overwritten");
+                logger.debug("anchor file exist");
+                anchorDest.renameTo(new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml.ucc." + System.currentTimeMillis())));
+                anchorSource.copyTo(new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml")));
+                logger.debug("anchor file is overwritten");
             }
         } catch (Exception e) {
             logger.error(e);
             String title = "Error during execution";
             String message = "An error occured: " + e.getMessage();
             return new CommandResponse(500, title, message);
-            //			return new CommandResponse(title, message);
+            //          return new CommandResponse(title, message);
         } finally {
             session.close();
+            
             if (out != null) {
                 try {
                     out.close();
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+            }
+            
+            if (in != null) {
+                try {
+                    in.close();
                 } catch (IOException e) {
                     logger.error(e);
                 }
@@ -146,9 +243,8 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
         String title = "Command executed";
         String message = "Message to process log added";
         return new CommandResponse(200, title, message);
-        //		return new CommandResponse(title, message);
     }
-
+    
     @Override
     public CommandResponse help() {
         String title = "Command ucc_upload";
