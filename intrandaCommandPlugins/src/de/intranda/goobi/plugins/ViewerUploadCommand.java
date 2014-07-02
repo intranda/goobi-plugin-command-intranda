@@ -86,7 +86,8 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         logger.debug("Import data for process with title " + processtitle);
 
         List<Process> processList =
-                ProcessManager.getProcesses("prozesse.titel", " prozesse.titel like '%" + MySQLHelper.escapeString(processtitle) + "%'");
+                ProcessManager.getProcesses("prozesse.titel", " prozesse.ProzesseID IN (select distinct(metadata.processid) from metadata where metadata.name = 'CatalogIDDigital' and metadata.value = '" + MySQLHelper.escapeString(processtitle) + "')");
+                     
         boolean secondSearch = false;
 
         if (processList.isEmpty()) {
