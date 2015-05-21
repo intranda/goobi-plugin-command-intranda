@@ -15,12 +15,14 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+
 import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
-//import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.config.ConfigMain;
+
+import org.goobi.beans.Process;
+
+import de.sub.goobi.config.ConfigurationHelper;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class UccCommand implements ICommandPlugin, IPlugin {
@@ -99,18 +101,18 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 //		}
 		try {
 
-			Prozess process = new ProzessDAO().get(processId);
+			Process process = ProcessManager.getProcessById(processId);
 
 			File meta = new File(process.getMetadataFilePath());
 			File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
-			File ruleset = new File(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + process.getRegelsatz().getDatei());
+			File ruleset = new File(ConfigurationHelper.getInstance().getRulesetFolder() + process.getRegelsatz().getDatei());
 
 			ExportXmlLog export = new ExportXmlLog();
-			File log = new File(ConfigMain.getParameter("tempfolder") + "logfile.xml");
+			File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
 			export.startExport(process, log);
 
 			File.setDefaultArchiveDetector(new DefaultArchiveDetector("tar.bz2|tar.gz|zip"));
-			File backup = new File(ConfigMain.getParameter("tempfolder") + "backup.zip");
+			File backup = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "backup.zip");
 			if (backup.exists() && backup.isArchive()) {
 				// Empty archive if it already exists
 				backup.deleteAll();

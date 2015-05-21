@@ -15,14 +15,13 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.hibernate.Session;
 
 import de.schlichtherle.io.File;
-import de.schlichtherle.io.FileOutputStream;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.HibernateUtilOld;
-//import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.config.ConfigMain;
+
+import org.goobi.beans.Process;
+
+import de.sub.goobi.config.ConfigurationHelper;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class UccUploadCommand implements ICommandPlugin, IPlugin {
@@ -34,7 +33,6 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
     // private static final String VERSION = "1.0.20111109";
 
     private HashMap<String, String> parameterMap;
-    //	private HttpServletResponse response;
     private HttpServletRequest request;
 
     @Override
@@ -68,7 +66,6 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
     @Override
     public void setHttpResponse(HttpServletResponse resp) {
-        //		response = resp;
     }
 
     @Override
@@ -88,88 +85,14 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
 
         return null;
     }
-//
-//    @Override
-//    public CommandResponse execute() {
-//        logger.trace("Execute UccUpload");
-//        Integer processId = Integer.parseInt(parameterMap.get("processId"));
-//        logger.trace("process id is " + processId);
-//        Session session = HibernateUtilOld.getSessionFactory().openSession();
-//        logger.trace("get hibernate session");
-//        File archive = new File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
-//        logger.trace("created temporary file " + archive.getAbsolutePath());
-//        OutputStream out = null;
-//        try {
-//            out = new FileOutputStream(archive);
-//            logger.trace("write to temporay file");
-//            InputStream in = request.getInputStream();
-//            logger.trace("read request input stream");
-//            int numRead;
-//            byte[] buf = new byte[4096];
-//            while ((numRead = in.read(buf)) >= 0) {
-//                out.write(buf, 0, numRead);
-//            }
-//            out.flush();
-//        } catch (FileNotFoundException e) {
-//            logger.error(e);
-//            String title = "Error during execution";
-//            String message = "An error occured: " + e.getMessage();
-//            return new CommandResponse(500, title, message);
-//        } catch (IOException e) {
-//            logger.error(e);
-//            String title = "Error during execution";
-//            String message = "An error occured: " + e.getMessage();
-//            return new CommandResponse(500, title, message);
-//        } finally {
-//            if (out != null) {
-//                try {
-//                    out.close();
-//                } catch (IOException e) {
-//                    logger.error(e);
-//                }
-//            }
-//        }
-//        try {
-//            logger.trace("finished data import");
-//            Prozess process = (Prozess) session.get(Prozess.class, processId);
-//            logger.trace("loaded process " + process.getTitel());
-//            File metaDest = new File(process.getMetadataFilePath());
-//            logger.trace("metadata file is " + metaDest.getAbsolutePath());
-//            File anchorDest = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
-//            File metaSource = new File(archive + "/meta.xml");
-//            File anchorSource = new File(archive + "/meta_anchor.xml");
-//            metaSource.copyTo(metaDest);
-//            logger.trace("metadata file is overwritten");
-//            if (anchorSource.exists()) {
-//                logger.trace("anchor file exist");
-//                anchorSource.copyTo(anchorDest);
-//                logger.trace("anchor file is overwritten");
-//            }
-//        } catch (Exception e) {
-//            logger.error(e);
-//            String title = "Error during execution";
-//            String message = "An error occured: " + e.getMessage();
-//            return new CommandResponse(500, title, message);
-//            //			return new CommandResponse(title, message);
-//        } finally {
-//            session.close();
-//
-//        }
-//
-//        String title = "Command executed";
-//        String message = "Message to process log added";
-//        return new CommandResponse(200, title, message);
-//        //		return new CommandResponse(title, message);
-//    }
 
+    @Override
     public CommandResponse execute() {
         logger.debug("Execute UccUpload");
         Integer processId = Integer.parseInt(parameterMap.get("processId"));
         logger.debug("process id is " + processId);
         logger.debug("get hibernate session");
-        Session session = HibernateUtilOld.getSessionFactory().openSession();
-        
-        java.io.File archive = new java.io.File(ConfigMain.getParameter("tempfolder"), processId + ".zip");
+        java.io.File archive = new java.io.File(ConfigurationHelper.getInstance().getTemporaryFolder(), processId + ".zip");
         logger.debug("created temporary file " + archive.getAbsolutePath());
         if (archive.exists()) {
             logger.debug("File " + archive.getAbsolutePath() + " does exist already. Try to delete it.");
@@ -196,7 +119,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
             }
             out.flush();
             logger.debug("finished data import");
-            Prozess process = (Prozess) session.get(Prozess.class, processId);
+            Process process = ProcessManager.getProcessById(processId);
 
             logger.debug("loaded process " + process.getTitel());
             File metaDest = new File(process.getMetadataFilePath());
@@ -221,8 +144,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
             return new CommandResponse(500, title, message);
             //          return new CommandResponse(title, message);
         } finally {
-            session.close();
-            
+
             if (out != null) {
                 try {
                     out.close();
@@ -230,7 +152,7 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
                     logger.error(e);
                 }
             }
-            
+
             if (in != null) {
                 try {
                     in.close();
@@ -243,8 +165,9 @@ public class UccUploadCommand implements ICommandPlugin, IPlugin {
         String title = "Command executed";
         String message = "Message to process log added";
         return new CommandResponse(200, title, message);
+        //      return new CommandResponse(title, message);
     }
-    
+
     @Override
     public CommandResponse help() {
         String title = "Command ucc_upload";

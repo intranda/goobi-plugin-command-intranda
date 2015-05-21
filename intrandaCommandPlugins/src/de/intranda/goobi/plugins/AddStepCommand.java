@@ -14,19 +14,19 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.beans.Usergroup;
+import org.goobi.beans.HistoryEvent;
+import org.goobi.beans.Project;
+import org.goobi.beans.Process;
+import org.goobi.beans.Step;
 
-import de.sub.goobi.Beans.Benutzergruppe;
-import de.sub.goobi.Beans.HistoryEvent;
-import de.sub.goobi.Beans.Projekt;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Schritt;
-import de.sub.goobi.Persistence.BenutzergruppenDAO;
-import de.sub.goobi.Persistence.ProjektDAO;
-import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.ProjectManager;
+import de.sub.goobi.persistence.managers.UsergroupManager;
 
 @PluginImplementation
 public class AddStepCommand implements ICommandPlugin, IPlugin {
@@ -118,24 +118,24 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 
 		
 		try {
-			Projekt projekt = new ProjektDAO().get(projectId);
+			Project projekt = ProjectManager.getProjectById(projectId);
 		
 
-		List<Prozess> plist = new ArrayList<Prozess>();
+		List<Process> plist = new ArrayList<Process>();
 		plist.addAll(projekt.getProzesse());
-		Benutzergruppe b = new BenutzergruppenDAO().get(userGroupId);
-		for (Prozess p : plist) {
+		Usergroup b = UsergroupManager.getUsergroupById(userGroupId);
+		for (Process p : plist) {
 			boolean added = false;
-			List<Schritt> slist = p.getSchritteList();
+			List<Step> slist = p.getSchritteList();
 			Collections.reverse(slist);
 
-			for (Schritt oldStep : slist) {
+			for (Step oldStep : slist) {
 				if (!added) {
 					int oldOrderNumber = oldStep.getReihenfolge();
 
 					if (oldOrderNumber == orderNumber) {
 						// create new step
-						Schritt newStep = new Schritt();
+					    Step newStep = new Step();
 						newStep.setReihenfolge(oldOrderNumber + 1);
 						if (stepdata.get("titel") != null) {
 							newStep.setTitel(stepdata.get("titel"));
@@ -259,28 +259,15 @@ public class AddStepCommand implements ICommandPlugin, IPlugin {
 							newStep.setBearbeitungsstatusEnum(oldStep.getBearbeitungsstatusEnum());
 							newStep.setBearbeitungsbenutzer(oldStep.getBearbeitungsbenutzer());
 							newStep.setBearbeitungsende(oldStep.getBearbeitungsende());
-							p.getHistory().add(
-									new HistoryEvent(oldStep.getBearbeitungsende(), new Double(oldOrderNumber + 1).doubleValue(), newStep.getTitel(),
-											HistoryEventType.stepDone, p));
 						} else {
 							newStep.setBearbeitungsstatusEnum(StepStatus.LOCKED);
 						}
 						p.getSchritte().add(newStep);
 						added = true;
-					} else {
-						oldStep.setReihenfolge(oldOrderNumber + 1);
-						List<HistoryEvent> history = p.getHistoryList();
-						for (HistoryEvent e : history) {
-							if (e.getStringValue() != null && e.getStringValue().equals(oldStep.getTitel())) {
-								if (e.getNumericValue() != null && e.getNumericValue() == new Double(oldOrderNumber)) {
-									e.setNumericValue(new Double(oldOrderNumber + 1));
-								}
-							}
-						}
 					}
 				}
 			}
-			new ProzessDAO().save(p);
+			ProcessManager.saveProcess(p);
 		}
 		} catch (DAOException e1) {
 			 String title = "Error during execution";

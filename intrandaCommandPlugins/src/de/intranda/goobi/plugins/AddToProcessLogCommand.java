@@ -10,16 +10,18 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
+import org.goobi.beans.Process;
+import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.Persistence.apache.ProcessManager;
-import de.sub.goobi.Persistence.apache.ProcessObject;
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
+import de.sub.goobi.persistence.managers.ProcessManager;
+import de.sub.goobi.persistence.managers.StepManager;
+
+
 
 @PluginImplementation
 public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
@@ -107,13 +109,13 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 			logger.warn("cannot encode " + value);
 		}
 		String type = this.parameterMap.get("type");
-		ProcessObject process = null;
+		Process process = null;
 		Integer id = null;
 		int processId = 0;
 
 		if (this.parameterMap.containsKey("stepId")) {
 			id = Integer.parseInt(this.parameterMap.get("stepId"));
-			StepObject so = StepManager.getStepById(id);
+			Step so = StepManager.getStepById(id);
 			if (so == null) {
 				String title = "Error during execution";
 				String message = "Could not load step with id: " + id;
@@ -124,7 +126,7 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 		} else {
 			processId = Integer.parseInt(this.parameterMap.get("processId"));
 		}
-		process = ProcessManager.getProcessObjectForId(processId);
+		process = ProcessManager.getProcessById(processId);
 
 		String logMessage = WikiFieldHelper.getWikiMessage(process.getWikifield(), type, value);
 		ProcessManager.addLogfile(logMessage, process.getId());

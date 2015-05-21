@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
-import org.goobi.production.Import.ImportObject;
-import org.goobi.production.Import.Record;
+import org.goobi.production.importer.ImportObject;
+import org.goobi.production.importer.Record;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.PluginType;
@@ -22,9 +22,11 @@ import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 import ugh.dl.Prefs;
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Persistence.ProzessDAO;
-import de.sub.goobi.config.ConfigMain;
+
+import org.goobi.beans.Process;
+
+import de.sub.goobi.config.ConfigurationHelper;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class ImportRecordCommand implements ICommandPlugin, IPlugin {
@@ -100,7 +102,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			Integer id = Integer.parseInt(this.parameterMap.get("templateId"));
 			logger.debug("templateId is " + id); 
 //			Prozess template = (Prozess) session.get(Prozess.class, id);
-			Prozess template = new ProzessDAO().get(id);
+			Process template = ProcessManager.getProcessById(id);
 			if (template != null) {
 				logger.debug("template is " + template.getTitel());
 			} else {
@@ -125,7 +127,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 			List<ImportObject> answer = new ArrayList<ImportObject>();
 			Prefs prefs = template.getRegelsatz().getPreferences();
 			logger.debug("ruleset is " + template.getRegelsatz().getDatei());
-			String tempfolder = ConfigMain.getParameter("tempfolder");
+			String tempfolder = ConfigurationHelper.getInstance().getTemporaryFolder();
 			logger.debug("tempfolder is : " + tempfolder);
 			wmi.setImportFolder(tempfolder);
 			wmi.setPrefs(prefs);
@@ -141,7 +143,7 @@ public class ImportRecordCommand implements ICommandPlugin, IPlugin {
 							+ io.getImportReturnValue().getValue();
 					return new CommandResponse(500, title, message);
 				}
-				Prozess p = JobCreation.generateProcess(io, template);
+				Process p = JobCreation.generateProcess(io, template);
 
 				if (p == null) {
 					String title = "Error during execution";

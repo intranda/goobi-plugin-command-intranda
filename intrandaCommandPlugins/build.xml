@@ -7,7 +7,7 @@
 	<!-- ================================= 
 	        properties             
 	     ================================= -->
-	<property name="filename" value="intrandaCommandPlugins" />
+	<property name="filename" value="intrandaCommandPlugin" />
 	<property name="dir.build" value="bin" />
 	<property name="dir.src" value="src" />
 	<property name="dir.test" value="test/src" />
@@ -19,8 +19,8 @@
 
 
 	<path id="classpath">
-		<fileset dir="/opt/digiverso/goobilibs/lib" />
-		<fileset dir="/opt/digiverso/libs" />
+	    <fileset dir="/opt/digiverso/goobi-jsf2/lib"/>
+	    <fileset dir="/opt/digiverso/libs" />
 	</path>
 
 	<path id="classpath-test">
@@ -145,7 +145,17 @@
 				<attribute name="Main-Class" value="de.intranda.goobi.PluginInfo" />
 				<attribute name="Class-Path" value="${libs.project}" />
 			</manifest>
-			<fileset dir="${dir.build}" />
+			<fileset dir="bin"/>
+		</jar>
+	</target>
+
+	<target name="jar-eclipse" unless="jenkins">
+		<jar destfile="${dir.deploy}/${filename}-${git.revision}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="de.intranda.goobi.PluginInfo" />
+				<attribute name="Class-Path" value="${libs.project}" />
+			</manifest>
+			<fileset dir="bin" />
 		</jar>
 	</target>
 
@@ -207,7 +217,7 @@
 
 		<copy file="${dir.src}/de/intranda/goobi/plugins.txt" todir="${dir.build}/de/intranda/goobi" />
 		
-		<javac destdir="${dir.build}" includeantruntime="false" debug="true">
+		<javac destdir="${dir.build}" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
 			<classpath refid="classpath-test" />
 			<compilerarg value="-Xlint" />
 			<src path="${dir.test}" />

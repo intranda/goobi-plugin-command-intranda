@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,11 +15,11 @@ import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.goobi.beans.Process;
+import org.goobi.beans.Processproperty;
 
-import de.sub.goobi.Beans.Prozess;
-import de.sub.goobi.Beans.Prozesseigenschaft;
-import de.sub.goobi.Persistence.ProzessDAO;
 import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.managers.ProcessManager;
 
 @PluginImplementation
 public class AddPropertyCommand implements ICommandPlugin, IPlugin {
@@ -100,27 +100,21 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
         } catch (UnsupportedEncodingException e1) {
             logger.warn("cannot encode " + propertyName);
         }
-        
+
         try {
             propertyValue = URLDecoder.decode(propertyValue, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
             logger.warn("cannot encode " + propertyValue);
         }
-        
-        Prozess process = null;
-        ProzessDAO dao = new ProzessDAO();
-        try {
-            process = dao.get(processID);
-        } catch (DAOException e) {
-            logger.error(e);
-            String title = "Process cannot be loaded.";
-            String message = "Cannot load process from database See the logfile for more information.";
-            return new CommandResponse(400, title, message);
-        }
+
+        Process process = null;
+
+        process = ProcessManager.getProcessById(processID);
+
         boolean propertyExistsAlready = false;
         if (overwriteExistingProperty) {
-            Set<Prozesseigenschaft> propertyList = process.getEigenschaften();
-            for (Prozesseigenschaft property : propertyList) {
+            List<Processproperty> propertyList = process.getEigenschaften();
+            for (Processproperty property : propertyList) {
                 if (property.getTitel().equalsIgnoreCase(propertyName)) {
                     propertyExistsAlready = true;
                     property.setWert(propertyValue);
@@ -129,7 +123,7 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
             }
         }
         if (!propertyExistsAlready) {
-            Prozesseigenschaft pe = new Prozesseigenschaft();
+            Processproperty pe = new Processproperty();
             pe.setContainer(0);
             pe.setTitel(propertyName);
             pe.setWert(propertyValue);
@@ -137,7 +131,7 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
             process.getEigenschaften().add(pe);
         }
         try {
-            dao.save(process);
+            ProcessManager.saveProcess(process);
         } catch (DAOException e) {
             logger.error(e);
             String title = "Process cannot be saved.";
@@ -156,8 +150,9 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
         message += "\n - 'processId' is mandatory. 'processId' defines the id of the process.";
         message += "\n - 'property' is mandatory. 'property' defines the name of the property.";
         message += "\n -  'value' is mandatory. The value defines the value of the property.";
-        message += "\n -  'overwriteExistingProperty' is optional. The value defines if the value of an existing property with the same name gets overwritten or if a new one gets created.";
-        
+        message +=
+                "\n -  'overwriteExistingProperty' is optional. The value defines if the value of an existing property with the same name gets overwritten or if a new one gets created.";
+
         return new CommandResponse(200, title, message);
 
     }

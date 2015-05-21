@@ -11,14 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
+
+import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.Persistence.apache.StepManager;
-import de.sub.goobi.Persistence.apache.StepObject;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
+import de.sub.goobi.helper.HelperSchritte;
+import de.sub.goobi.persistence.managers.StepManager;
+
 
 
 @PluginImplementation
@@ -79,10 +81,10 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 		String scriptname = this.parameterMap.get("scriptName");
 		try {
 			int id = Integer.parseInt(processId);
-			List<StepObject> stepList = StepManager.getStepsForProcess(id);
-			StepObject step = null;
-			for (StepObject so : stepList) {
-				if (so.getTitle().equals(stepName)) {
+			List<Step> stepList = StepManager.getStepsForProcess(id);
+			Step step = null;
+			for (Step so : stepList) {
+				if (so.getTitel().equals(stepName)) {
 					step = so;
 				}
 			}
@@ -93,10 +95,10 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 				return new CommandResponse(500,title, message);
 			}
 			
-			HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+			HelperSchritte hs = new HelperSchritte();
 
 			if (scriptname != null && scriptname.length() > 0) {
-				Map<String,String> scripts = StepManager.loadScriptMap(step.getId());
+				Map<String,String> scripts = step.getAllScripts();
 				if (scripts.containsKey(scriptname)) {
 					String script = scripts.get(scriptname);
 					hs.executeScriptForStepObject(step, script, false);					
@@ -125,11 +127,11 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command runScriptByProcessId";
+		String title = "Command runScript";
 		String message = "This command calls scripts for a given task.";
 		message += "\n - 'processId' defines the id of the process.";
 		message += "\n - 'stepName' defines the name of task.";
-		message += "\n - 'scriptName' is optional and defines a script to call. If no script is defined, all scripts of the task gets started.";
+		message += "\n - 'scriptname' is optional and defines a script to call. If no script is defined, all scripts of the task gets started.";
 		return new CommandResponse(200,title, message);
 	}
 
