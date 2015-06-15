@@ -20,6 +20,7 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import de.schlichtherle.io.FileOutputStream;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.managers.MetadataManager;
 import de.sub.goobi.persistence.managers.MySQLHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -79,41 +80,43 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
 
     @Override
     public CommandResponse execute() {
-        String processtitle = parameterMap.get(PARAMETER_PROCESS);
+        String identifier = parameterMap.get(PARAMETER_PROCESS);
         String foldername = parameterMap.get(PARAMETER_FOLDERNAME);
         String filename = parameterMap.get(PARAMETER_FILENAME);
 
-        logger.debug("Import data for process with title " + processtitle);
+        logger.debug("Import data for process with title " + identifier);
 
-        List<Process> processList =
-                ProcessManager.getProcesses("prozesse.titel", " prozesse.ProzesseID IN (select distinct(metadata.processid) from metadata where metadata.name = 'CatalogIDDigital' and metadata.value = '" + MySQLHelper.escapeString(processtitle) + "')");
-                     
-        boolean secondSearch = false;
+        List<Integer> processIdList = MetadataManager.getProcessesWithMetadata("CatalogIDDigital", identifier);
+//        
+//        List<Process> processList =
+//                ProcessManager.getProcesses("prozesse.titel", " prozesse.ProzesseID IN (select distinct(metadata.processid) from metadata where metadata.name = 'CatalogIDDigital' and metadata.value = '" + MySQLHelper.escapeString(identifier) + "')");
+//                     
+//        boolean secondSearch = false;
+//
+//        if (processIdList.isEmpty()) {
+//            logger.debug("Found no process with title " + identifier + ", searching for property with that value.");
+//            secondSearch = true;
+//        } else if (processIdList.size() > 1) {
+//            logger.debug("Found more than one process with title " + identifier + ", searching for property with that value.");
+//            secondSearch = true;
+//        }
+//        if (secondSearch) {
+//            processList =
+//                    ProcessManager
+//                            .getProcesses(
+//                                    "prozesse.titel",
+//                                    "p.titel from prozesse p, werkstuecke w, werkstueckeeigenschaften we where p.ProzesseID = w.ProzesseID and w.werkstueckeID = we.werkstueckeID and we.WERT LIKE '%"
+//                                            + MySQLHelper.escapeString(identifier) + "%'");
+//        }
 
-        if (processList.isEmpty()) {
-            logger.debug("Found no process with title " + processtitle + ", searching for property with that value.");
-            secondSearch = true;
-        } else if (processList.size() > 1) {
-            logger.debug("Found more than one process with title " + processtitle + ", searching for property with that value.");
-            secondSearch = true;
-        }
-        if (secondSearch) {
-            processList =
-                    ProcessManager
-                            .getProcesses(
-                                    "prozesse.titel",
-                                    "p.titel from prozesse p, werkstuecke w, werkstueckeeigenschaften we where p.ProzesseID = w.ProzesseID and w.werkstueckeID = we.werkstueckeID and we.WERT LIKE '%"
-                                            + MySQLHelper.escapeString(processtitle) + "%'");
-        }
-
-        if (processList.isEmpty()) {
+        if (processIdList.isEmpty()) {
             String title = "SEARCH ERROR";
-            String value = "Found no process with title " + processtitle;
+            String value = "Found no process with title " + identifier;
             logger.error(value);
             return new CommandResponse(500, title, value);
-        } else if (processList.size() > 1) {
+        } else if (processIdList.size() > 1) {
             String title = "SEARCH ERROR";
-            String value = "Found more than one process with title " + processtitle;
+            String value = "Found more than one process with title " + identifier;
             logger.error(value);
             return new CommandResponse(500, title, value);
         } else {
@@ -122,7 +125,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
                 fileextension = fileextension.substring(fileextension.lastIndexOf("_"));
             }
 
-            Process process = processList.get(0);
+            Process process = ProcessManager.getProcessById(processIdList.get(0));
             File viewerFolder;
             try {
                 File exportFolder = new File(process.getExportDirectory());
