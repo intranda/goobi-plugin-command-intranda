@@ -87,36 +87,15 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         logger.debug("Import data for process with title " + identifier);
 
         List<Integer> processIdList = MetadataManager.getProcessesWithMetadata("CatalogIDDigital", identifier);
-//        
-//        List<Process> processList =
-//                ProcessManager.getProcesses("prozesse.titel", " prozesse.ProzesseID IN (select distinct(metadata.processid) from metadata where metadata.name = 'CatalogIDDigital' and metadata.value = '" + MySQLHelper.escapeString(identifier) + "')");
-//                     
-//        boolean secondSearch = false;
-//
-//        if (processIdList.isEmpty()) {
-//            logger.debug("Found no process with title " + identifier + ", searching for property with that value.");
-//            secondSearch = true;
-//        } else if (processIdList.size() > 1) {
-//            logger.debug("Found more than one process with title " + identifier + ", searching for property with that value.");
-//            secondSearch = true;
-//        }
-//        if (secondSearch) {
-//            processList =
-//                    ProcessManager
-//                            .getProcesses(
-//                                    "prozesse.titel",
-//                                    "p.titel from prozesse p, werkstuecke w, werkstueckeeigenschaften we where p.ProzesseID = w.ProzesseID and w.werkstueckeID = we.werkstueckeID and we.WERT LIKE '%"
-//                                            + MySQLHelper.escapeString(identifier) + "%'");
-//        }
 
         if (processIdList.isEmpty()) {
             String title = "SEARCH ERROR";
-            String value = "Found no process with title " + identifier;
+            String value = "Found no process with id " + identifier;
             logger.error(value);
             return new CommandResponse(500, title, value);
         } else if (processIdList.size() > 1) {
             String title = "SEARCH ERROR";
-            String value = "Found more than one process with title " + identifier;
+            String value = "Found more than one process with id " + identifier;
             logger.error(value);
             return new CommandResponse(500, title, value);
         } else {
