@@ -21,7 +21,6 @@ import de.schlichtherle.io.FileOutputStream;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.managers.MetadataManager;
-import de.sub.goobi.persistence.managers.MySQLHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -87,7 +86,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         logger.debug("Import data for process with title " + identifier);
 
         List<Integer> processIdList = MetadataManager.getProcessesWithMetadata("CatalogIDDigital", identifier);
-
+                                                                                
         if (processIdList.isEmpty()) {
             String title = "SEARCH ERROR";
             String value = "Found no process with id " + identifier;
