@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.goobi.beans.Process;
 import org.apache.log4j.Logger;
 import org.goobi.production.cli.CommandResponse;
+import org.goobi.production.cli.helper.StringPair;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
@@ -86,24 +87,42 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         logger.debug("Import data for process with title " + identifier);
 
         List<Integer> processIdList = MetadataManager.getProcessesWithMetadata("CatalogIDDigital", identifier);
-                                                                                
+        Integer processId = null;
         if (processIdList.isEmpty()) {
             String title = "SEARCH ERROR";
             String value = "Found no process with id " + identifier;
             logger.error(value);
             return new CommandResponse(500, title, value);
         } else if (processIdList.size() > 1) {
-            String title = "SEARCH ERROR";
-            String value = "Found more than one process with id " + identifier;
-            logger.error(value);
-            return new CommandResponse(500, title, value);
-        } else {
+            for (Integer id : processIdList) {
+                List<StringPair> spl = MetadataManager.getMetadata(id);
+                for (StringPair sp : spl) {
+                    if (sp.getOne().equals("CatalogIDDigital")) {
+                        String value = sp.getTwo();
+                        String[] parts = value.split(";");
+                        for (String part : parts) {
+                            if (part.equals(identifier)) {
+                                processId = id;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            //            String title = "SEARCH ERROR";
+            //            String value = "Found more than one process with id " + identifier;
+            //            logger.error(value);
+            //            return new CommandResponse(500, title, value);
+        } else if (processIdList.size() == 1) {
+            processId = processIdList.get(0);
+        }
+        {
             String fileextension = foldername;
             if (fileextension.contains("_")) {
                 fileextension = fileextension.substring(fileextension.lastIndexOf("_"));
             }
 
-            Process process = ProcessManager.getProcessById(processIdList.get(0));
+            Process process = ProcessManager.getProcessById(processId);
             File viewerFolder;
             try {
                 File exportFolder = new File(process.getExportDirectory());
