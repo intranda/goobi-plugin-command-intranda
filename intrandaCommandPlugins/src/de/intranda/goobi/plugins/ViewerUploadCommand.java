@@ -97,7 +97,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
             for (Integer id : processIdList) {
                 List<StringPair> spl = MetadataManager.getMetadata(id);
                 for (StringPair sp : spl) {
-                    if (sp.getOne().equals("CatalogIDDigital")) {
+                    if (sp.getOne().trim().equals("CatalogIDDigital")) {
                         String value = sp.getTwo();
                         String[] parts = value.split(";");
                         for (String part : parts) {
