@@ -19,7 +19,6 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 import de.sub.goobi.config.ConfigurationHelper;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritte;
 import de.sub.goobi.helper.ShellScript;
 import de.sub.goobi.persistence.managers.StepManager;

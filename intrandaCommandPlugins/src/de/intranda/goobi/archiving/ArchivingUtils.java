@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.log4j.Logger;
 import org.jdom2.Document;
@@ -287,7 +288,8 @@ public class ArchivingUtils {
 		 * @return
 		 */
 		public static Document getDocumentFromFile(File file) {
-			SAXBuilder builder = new SAXBuilder(false);
+			@SuppressWarnings("deprecation")
+            SAXBuilder builder = new SAXBuilder(false);
 			Document document = null;
 
 			try {
