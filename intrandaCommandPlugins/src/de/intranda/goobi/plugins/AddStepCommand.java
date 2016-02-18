@@ -15,12 +15,10 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.beans.Usergroup;
-import org.goobi.beans.HistoryEvent;
 import org.goobi.beans.Project;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;

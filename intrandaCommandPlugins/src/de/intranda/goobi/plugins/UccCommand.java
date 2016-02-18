@@ -109,7 +109,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
 
 			ExportXmlLog export = new ExportXmlLog();
 			File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
-			export.startExport(process, log);
+			export.startExport(process, log.toString());
 
 			File.setDefaultArchiveDetector(new DefaultArchiveDetector("tar.bz2|tar.gz|zip"));
 			File backup = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "backup.zip");

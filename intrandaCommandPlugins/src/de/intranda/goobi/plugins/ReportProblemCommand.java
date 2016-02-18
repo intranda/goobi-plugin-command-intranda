@@ -15,7 +15,6 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.beans.HistoryEvent;
 import org.goobi.beans.Step;
 import org.goobi.beans.ErrorProperty;
 
