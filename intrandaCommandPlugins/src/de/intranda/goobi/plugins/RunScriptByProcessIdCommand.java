@@ -127,7 +127,7 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 
 	@Override
 	public CommandResponse help() {
-		String title = "Command runScript";
+		String title = "Command runScriptByProcessId";
 		String message = "This command calls scripts for a given task.";
 		message += "\n - 'processId' defines the id of the process.";
 		message += "\n - 'stepName' defines the name of task.";
