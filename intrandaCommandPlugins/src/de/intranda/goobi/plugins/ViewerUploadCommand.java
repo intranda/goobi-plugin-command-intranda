@@ -48,7 +48,6 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
         return COMMAND_TITLE;
     }
 
-    @Override
     public String getDescription() {
         return COMMAND_TITLE;
     }

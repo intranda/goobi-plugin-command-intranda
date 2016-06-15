@@ -49,7 +49,6 @@ public class RunScriptCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
 	public String getDescription() {
 		return NAME;
 	}

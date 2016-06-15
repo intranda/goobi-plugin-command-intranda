@@ -46,7 +46,6 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
         return PluginType.Command;
     }
 
-    @Override
     public String getDescription() {
         return NAME;
     }

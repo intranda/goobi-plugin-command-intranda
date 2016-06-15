@@ -42,7 +42,6 @@ public class RunScriptAndCloseCommand implements ICommandPlugin, IPlugin {
         return ID;
     }
 
-    @Override
     public String getDescription() {
         return NAME;
     }

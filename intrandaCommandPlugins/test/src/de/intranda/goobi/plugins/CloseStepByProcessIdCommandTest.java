@@ -22,11 +22,11 @@ public class CloseStepByProcessIdCommandTest {
         assertEquals(ip.getTitle(), "closeStepByProcessId");
     }
 
-    @Test
-    public void testGetDescription() {
-        ICommandPlugin ip = new CloseStepByProcessIdCommand();
-        assertEquals(ip.getDescription(), "closeStepByProcessId");
-    }
+//    @Test
+//    public void testGetDescription() {
+//        ICommandPlugin ip = new CloseStepByProcessIdCommand();
+//        assertEquals(ip.getDescription(), "closeStepByProcessId");
+//    }
 
     @Test
     public void testParameterMap() {

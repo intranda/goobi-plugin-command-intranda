@@ -47,7 +47,6 @@ public class RunScriptByProcessIdCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
 	public String getDescription() {
 		return NAME;
 	}
