@@ -50,7 +50,6 @@ public class CloseStepCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 	
-	@Override
 	public String getDescription() {
 		return getTitle();
 	}

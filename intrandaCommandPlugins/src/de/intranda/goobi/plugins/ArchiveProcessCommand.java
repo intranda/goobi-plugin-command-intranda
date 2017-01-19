@@ -52,7 +52,6 @@ public class ArchiveProcessCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 	
-	@Override
 	public String getDescription() {
 		return ID;
 	}

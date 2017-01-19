@@ -49,7 +49,6 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 		return ID;
 	}
 
-	@Override
 	public String getDescription() {
 		return ID;
 	}
