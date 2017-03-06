@@ -2,6 +2,7 @@ package de.intranda.goobi.plugins;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,10 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.log4j.Logger;
+import org.goobi.beans.LogEntry;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
-import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.LogType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
@@ -127,8 +129,16 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
 		}
 		process = ProcessManager.getProcessById(processId);
 
-		String logMessage = WikiFieldHelper.getWikiMessage(process.getWikifield(), type, value);
-		ProcessManager.addLogfile(logMessage, process.getId());
+        LogEntry logEntry = new LogEntry();
+        logEntry.setContent(value);
+        logEntry.setCreationDate(new Date());
+        logEntry.setProcessId(process.getId());
+        logEntry.setType(LogType.getByTitle(type));
+
+        logEntry.setUserName("webapi");
+
+        ProcessManager.saveLogEntry(logEntry);
+		
 
 		String title = "Command executed";
 		String message = "Message to process log added";

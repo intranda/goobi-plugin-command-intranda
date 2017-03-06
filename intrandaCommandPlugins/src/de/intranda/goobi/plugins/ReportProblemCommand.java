@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.goobi.production.cli.CommandResponse;
-import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.enums.LogType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.beans.Step;
 import org.goobi.beans.ErrorProperty;
+import org.goobi.beans.LogEntry;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
@@ -138,29 +139,27 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                 temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
                 temp.setCorrectionStep();
                 temp.setBearbeitungsende(null);
-                ErrorProperty se = new ErrorProperty();
-                // Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                se.setTitel(Helper.getTranslation("Korrektur notwendig"));
-                se.setWert("[automatic] " + errorMessage);
-                se.setType(PropertyType.messageError);
-                se.setCreationDate(myDate);
-                se.setSchritt(temp);
-                source.getProzess().setWikifield(WikiFieldHelper.getWikiMessage(source.getProzess().getWikifield(), "error", errorMessage));
 
-                temp.getEigenschaften().add(se);
+                LogEntry logEntry = new LogEntry();
+                logEntry.setContent(Helper.getTranslation("Korrektur notwendig") + " [automatic] " + errorMessage);
+                logEntry.setCreationDate(myDate);
+                logEntry.setProcessId(temp.getProzess().getId());
+                logEntry.setType(LogType.ERROR);
 
-                StepManager.saveStep(temp);
+                logEntry.setUserName("webapi");
+
+                ProcessManager.saveLogEntry(logEntry);
+
                 // dao.save(temp);
-                HistoryManager.addHistory(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(),
-                        HistoryEventType.stepError.getValue(), temp.getProzess().getId());
+                HistoryManager.addHistory(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError.getValue(), temp
+                        .getProzess().getId());
 
                 /*
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
                  */
 
-                List<Step> alleSchritteDazwischen =
-                        StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + source.getProzess().getId() + " AND Reihenfolge <= "
-                                + source.getReihenfolge() + "  AND Reihenfolge > " + temp.getReihenfolge(), 0, Integer.MAX_VALUE);
+                List<Step> alleSchritteDazwischen = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + source.getProzess().getId()
+                        + " AND Reihenfolge <= " + source.getReihenfolge() + "  AND Reihenfolge > " + temp.getReihenfolge(), 0, Integer.MAX_VALUE);
                 // List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
                 // .add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
                 // .addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
