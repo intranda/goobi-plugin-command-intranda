@@ -163,7 +163,7 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
                             // myLogger.debug(command);
 
                             try {
-                                ShellScript.legacyCallShell2(command);
+                                ShellScript.legacyCallShell2(command, so.getProcessId());
                             } catch (java.io.IOException ioe) {
                                 logger.error("IOException UploadFromHome", ioe);
                                 String title = "Error during execution";
