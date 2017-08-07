@@ -158,24 +158,24 @@ public class CloseStepByProcessIdCommand implements ICommandPlugin, IPlugin {
                             nach = nach.replaceAll(" ", "__");
                             File benutzerHome = new File(nach);
 
-                            String command = ConfigurationHelper.getInstance().getScriptDeleteSymLink() + " ";
-                            command += benutzerHome;
-                            // myLogger.debug(command);
-
-                            try {
-                                ShellScript.legacyCallShell2(command, so.getProcessId());
-                            } catch (java.io.IOException ioe) {
-                                logger.error("IOException UploadFromHome", ioe);
-                                String title = "Error during execution";
-                                message = "Step was closed, but unmount from user home failed";
-                                return new CommandResponse(500, title, message);
-                            } catch (InterruptedException e) {
-                                logger.error("IOException UploadFromHome", e);
-                                String title = "Error during execution";
-                                message = "Step was closed, but unmount from user home failed";
-                                return new CommandResponse(500, title, message);
+                            String command = ConfigurationHelper.getInstance().getScriptDeleteSymLink();
+                            if (!command.isEmpty()){
+	                            command += " " + benutzerHome;
+	                            // myLogger.debug(command);
+	                            try {
+	                                ShellScript.legacyCallShell2(command, so.getProcessId());
+	                            } catch (java.io.IOException ioe) {
+	                                logger.error("IOException UploadFromHome", ioe);
+	                                String title = "Error during execution";
+	                                message = "Step was closed, but unmount from user home failed";
+	                                return new CommandResponse(500, title, message);
+	                            } catch (InterruptedException e) {
+	                                logger.error("IOException UploadFromHome", e);
+	                                String title = "Error during execution";
+	                                message = "Step was closed, but unmount from user home failed";
+	                                return new CommandResponse(500, title, message);
+	                            }
                             }
-
                         }
 
                         String title = "Command executed";
