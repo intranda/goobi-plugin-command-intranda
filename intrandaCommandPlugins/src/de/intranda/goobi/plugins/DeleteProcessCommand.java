@@ -6,21 +6,20 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.log4j.Logger;
+import org.goobi.beans.Process;
+import org.goobi.beans.Step;
+import org.goobi.beans.User;
+import org.goobi.beans.Usergroup;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.beans.User;
-import org.goobi.beans.Usergroup;
-import org.goobi.beans.Process;
-import org.goobi.beans.Step;
 
-import de.sub.goobi.helper.NIOFileUtils;
+import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
@@ -107,7 +106,7 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
                 }
             }
 
-            NIOFileUtils.deleteDir(Paths.get(p.getProcessDataDirectory()));
+            StorageProvider.getInstance().deleteDir(Paths.get(p.getProcessDataDirectory()));
             ProcessManager.deleteProcess(p);
 
         } catch (Exception e) {
