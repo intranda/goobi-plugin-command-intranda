@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,16 +9,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
+import org.goobi.beans.ErrorProperty;
+import org.goobi.beans.LogEntry;
+import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.LogType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.beans.Step;
-import org.goobi.beans.ErrorProperty;
-import org.goobi.beans.LogEntry;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.HistoryEventType;
@@ -28,6 +27,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.managers.HistoryManager;
 import de.sub.goobi.persistence.managers.ProcessManager;
 import de.sub.goobi.persistence.managers.StepManager;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 public class ReportProblemCommand implements ICommandPlugin, IPlugin {
@@ -154,12 +154,20 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                 HistoryManager.addHistory(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError.getValue(), temp
                         .getProzess().getId());
 
+                List<Step> alleSchritteDazwischen = new ArrayList<>();
+                for (Step s : source.getProzess().getSchritteList()) {
+                    if (s.getReihenfolge()<= source.getReihenfolge() && s.getReihenfolge() > temp.getReihenfolge()) {
+                        alleSchritteDazwischen.add(s);
+                    }
+                }
+
+
                 /*
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
                  */
 
-                List<Step> alleSchritteDazwischen = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + source.getProzess().getId()
-                        + " AND Reihenfolge <= " + source.getReihenfolge() + "  AND Reihenfolge > " + temp.getReihenfolge(), 0, Integer.MAX_VALUE);
+                //                List<Step> alleSchritteDazwischen = StepManager.getSteps("Reihenfolge desc", " schritte.prozesseID = " + source.getProzess().getId()
+                //                        + " AND Reihenfolge <= " + source.getReihenfolge() + "  AND Reihenfolge > " + temp.getReihenfolge(), 0, Integer.MAX_VALUE);
                 // List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
                 // .add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
                 // .addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
@@ -176,6 +184,8 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                     seg.setType(PropertyType.messageImportant);
                     seg.setCreationDate(new Date());
                     step.getEigenschaften().add(seg);
+
+                    StepManager.saveStep(step);
                 }
                 ProcessManager.saveProcess(source.getProzess());
                 // pdao.save(source.getProzess());
