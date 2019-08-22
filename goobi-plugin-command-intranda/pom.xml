@@ -96,7 +96,6 @@
 			<artifactId>goobi-core-jar</artifactId>
 			<version>3.0.10</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
