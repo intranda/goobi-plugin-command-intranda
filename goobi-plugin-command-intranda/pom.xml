@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>de.intranda.goobi.workflow</groupId>
 			<artifactId>goobi-core-jar</artifactId>
-			<version>3.0.10</version>
+			<version>3.0.36</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

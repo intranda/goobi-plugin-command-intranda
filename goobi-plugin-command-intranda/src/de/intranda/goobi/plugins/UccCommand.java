@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.goobi.beans.Process;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.PluginType;
-import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
@@ -44,6 +43,7 @@ import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import io.goobi.workflow.xslt.XsltPreparatorXmlLog;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
@@ -127,7 +127,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
             File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
             File ruleset = new File(ConfigurationHelper.getInstance().getRulesetFolder() + process.getRegelsatz().getDatei());
 
-            ExportXmlLog export = new ExportXmlLog();
+            XsltPreparatorXmlLog export = new XsltPreparatorXmlLog();
             File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
             export.startExport(process, log.toString());
 
