@@ -43,7 +43,7 @@ import de.schlichtherle.io.DefaultArchiveDetector;
 import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.persistence.managers.ProcessManager;
-import io.goobi.workflow.xslt.XsltPreparatorXmlLog;
+import io.goobi.workflow.xslt.XsltPreparatorMetadata;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
@@ -127,7 +127,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
             File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
             File ruleset = new File(ConfigurationHelper.getInstance().getRulesetFolder() + process.getRegelsatz().getDatei());
 
-            XsltPreparatorXmlLog export = new XsltPreparatorXmlLog();
+            XsltPreparatorMetadata export = new XsltPreparatorMetadata();
             File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
             export.startExport(process, log.toString());
 
