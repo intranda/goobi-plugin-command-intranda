@@ -127,9 +127,9 @@ public class UccCommand implements ICommandPlugin, IPlugin {
             File anchor = new File(process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml"));
             File ruleset = new File(ConfigurationHelper.getInstance().getRulesetFolder() + process.getRegelsatz().getDatei());
 
-            XsltPreparatorMetadata export = new XsltPreparatorMetadata();
-            File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
-            export.startExport(process, log.toString());
+//            XsltPreparatorMetadata export = new XsltPreparatorMetadata();
+//            File log = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "logfile.xml");
+//            export.startExport(process, log.toString());
 
             File.setDefaultArchiveDetector(new DefaultArchiveDetector("tar.bz2|tar.gz|zip"));
             File backup = new File(ConfigurationHelper.getInstance().getTemporaryFolder() + "backup.zip");
@@ -142,7 +142,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
                 anchor.copyTo(new File(backup + java.io.File.separator + "meta_anchor.xml"));
             }
             ruleset.copyTo(new File(backup + java.io.File.separator + "ruleset.xml"));
-            log.copyTo(new File(backup + java.io.File.separator + "logfile.xml"));
+//            log.copyTo(new File(backup + java.io.File.separator + "logfile.xml"));
             File.umount();
 
             // output data
@@ -161,7 +161,7 @@ public class UccCommand implements ICommandPlugin, IPlugin {
             out.flush();
             in.close();
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.toString(), e);
 
         }
         String title = "Command executed";
