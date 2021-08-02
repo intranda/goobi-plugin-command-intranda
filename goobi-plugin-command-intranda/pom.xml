@@ -6,7 +6,7 @@
   <properties>
     <jar.name>plugin_intranda_command_default</jar.name>
     <dest.folder>/opt/digiverso/goobi/plugins/command/</dest.folder>
-    <goobi.version>21.06.7</goobi.version>
+    <goobi.version>21.06.8-SNAPSHOT</goobi.version>
   </properties>
   <distributionManagement>
     <repository>

@@ -120,18 +120,24 @@ public class ExportDmsCommand implements ICommandPlugin, IPlugin {
         try {
 
             Process source = ProcessManager.getProcessById(id);
-            //          ProzessDAO dao = new ProzessDAO();
-            //          Prozess p = dao.get(id);
-            ExportDms export = new ExportDms(images);
-            export.setExportFulltext(ocr);
-            if (export.startExport(source)) {
-                String title = "Command executed";
-                String message = "Process exported to DMS";
-                return new CommandResponse(200, title, message);
-            } else {
-                String title = "Error during execution";
-                String message = "An error occured.";
-                return new CommandResponse(500, title, message);
+            if(source.getContainsExportStep()) {
+	            //          ProzessDAO dao = new ProzessDAO();
+	            //          Prozess p = dao.get(id);
+	            ExportDms export = new ExportDms(images);
+	            export.setExportFulltext(ocr);
+	            if (export.startExport(source)) {
+	                String title = "Command executed";
+	                String message = "Process exported to DMS";
+	                return new CommandResponse(200, title, message);
+	            } else {
+	                String title = "Error during execution";
+	                String message = "An error occured.";
+	                return new CommandResponse(500, title, message);
+	            }
+            }else {
+            	String title = "Error during execution";
+            	String message = "An error occured: no step with type Export found in process with id "+source.getId();
+            	return new CommandResponse(500, title, message);
             }
 
         } catch (Exception e) {
