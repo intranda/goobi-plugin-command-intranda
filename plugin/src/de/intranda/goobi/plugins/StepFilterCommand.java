@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -92,7 +92,7 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
     public CommandResponse execute() {
         boolean stepOpenOnly = false;
         String filter = this.parameterMap.get("filter");
-        List<Integer> myIds = new ArrayList<Integer>();
+        List<Integer> myIds = new ArrayList<>();
         if (filter == null || filter.trim().isEmpty()) {
             filter = "";
         }
@@ -106,7 +106,7 @@ public class StepFilterCommand implements ICommandPlugin, IPlugin {
 
         try {
             String sql = FilterHelper.criteriaBuilder(filter, false, stepOpenOnly, false, false, false, true);
-            myIds = StepManager.getIDList(sql);
+            myIds = StepManager.getIDsForFilter(sql);
 
             String answer = "";
             if (myIds.size() > 0) {

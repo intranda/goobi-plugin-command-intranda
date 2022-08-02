@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -92,14 +92,14 @@ public class ProcessFilterCommand implements ICommandPlugin, IPlugin {
     public CommandResponse execute() {
         String filter = this.parameterMap.get("filter");
 
-        List<Integer> myIds = new ArrayList<Integer>();
+        List<Integer> myIds = new ArrayList<>();
         if (filter == null || filter.trim().isEmpty()) {
             filter = "";
         }
         try {
 
             String sql = FilterHelper.criteriaBuilder(filter, false, null, null, null, true, false);
-            myIds = ProcessManager.getIDList(sql);
+            myIds = ProcessManager.getIdsForFilter(sql);
 
             String answer = "";
             if (myIds.size() > 0) {

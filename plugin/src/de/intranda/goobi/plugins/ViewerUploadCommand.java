@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -44,7 +44,6 @@ import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.schlichtherle.io.FileOutputStream;
-import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.managers.MetadataManager;
 import de.sub.goobi.persistence.managers.ProcessManager;
@@ -160,15 +159,7 @@ public class ViewerUploadCommand implements ICommandPlugin, IPlugin {
                 String title = "IO Error";
                 String value = "Folder " + foldername + " can not be created.";
                 return new CommandResponse(500, title, value);
-            } catch (DAOException e) {
-                String title = "IO Error";
-                String value = "Folder " + foldername + " can not be created.";
-                return new CommandResponse(500, title, value);
             } catch (IOException e) {
-                String title = "IO Error";
-                String value = "Folder " + foldername + " can not be created.";
-                return new CommandResponse(500, title, value);
-            } catch (InterruptedException e) {
                 String title = "IO Error";
                 String value = "Folder " + foldername + " can not be created.";
                 return new CommandResponse(500, title, value);
