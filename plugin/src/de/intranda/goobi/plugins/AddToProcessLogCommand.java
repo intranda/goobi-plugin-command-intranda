@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -27,14 +27,12 @@ package de.intranda.goobi.plugins;
  */
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.goobi.beans.LogEntry;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
@@ -43,6 +41,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.persistence.managers.ProcessManager;
 import de.sub.goobi.persistence.managers.StepManager;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -149,16 +148,7 @@ public class AddToProcessLogCommand implements ICommandPlugin, IPlugin {
             processId = Integer.parseInt(this.parameterMap.get("processId"));
         }
         process = ProcessManager.getProcessById(processId);
-
-        LogEntry logEntry = new LogEntry();
-        logEntry.setContent(value);
-        logEntry.setCreationDate(new Date());
-        logEntry.setProcessId(process.getId());
-        logEntry.setType(LogType.getByTitle(type));
-
-        logEntry.setUserName("webapi");
-
-        ProcessManager.saveLogEntry(logEntry);
+        Helper.addMessageToProcessJournal(process.getId(), LogType.getByTitle(type), value, "webapi");
 
         String title = "Command executed";
         String message = "Message to process log added";

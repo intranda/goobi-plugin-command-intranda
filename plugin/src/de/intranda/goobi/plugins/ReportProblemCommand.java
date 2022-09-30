@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.goobi.beans.ErrorProperty;
-import org.goobi.beans.LogEntry;
 import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
 import org.goobi.production.enums.LogType;
@@ -164,16 +163,8 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                 temp.setBearbeitungsstatusEnum(StepStatus.OPEN);
                 temp.setCorrectionStep();
                 temp.setBearbeitungsende(null);
-
-                LogEntry logEntry = new LogEntry();
-                logEntry.setContent(Helper.getTranslation("Korrektur notwendig") + " [automatic] " + errorMessage);
-                logEntry.setCreationDate(myDate);
-                logEntry.setProcessId(temp.getProzess().getId());
-                logEntry.setType(LogType.ERROR);
-
-                logEntry.setUserName("webapi");
-
-                ProcessManager.saveLogEntry(logEntry);
+                Helper.addMessageToProcessJournal(temp.getProzess().getId(), LogType.ERROR,
+                        Helper.getTranslation("Korrektur notwendig") + " [automatic] " + errorMessage, "webapi");
 
                 // dao.save(temp);
                 HistoryManager.addHistory(myDate, temp.getReihenfolge().doubleValue(), temp.getTitel(), HistoryEventType.stepError.getValue(),
