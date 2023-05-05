@@ -28,7 +28,6 @@ package de.intranda.goobi.plugins;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -186,8 +185,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                 // List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
                 // .add(Restrictions.le("reihenfolge", source.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
                 // .addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(source.getProzess().getId())).list();
-                for (Iterator<Step> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-                    Step step = iter.next();
+                for (Step step : alleSchritteDazwischen) {
                     step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
                     // if (step.getPrioritaet().intValue() == 0)
                     step.setCorrectionStep();
@@ -196,7 +194,7 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
                     seg.setTitel(Helper.getTranslation("Korrektur notwendig"));
                     seg.setWert(Helper.getTranslation("KorrekturFuer") + temp.getTitel() + ": " + errorMessage);
                     seg.setSchritt(step);
-                    seg.setType(PropertyType.messageImportant);
+                    seg.setType(PropertyType.MESSAGE_IMPORTANT);
                     seg.setCreationDate(new Date());
                     step.getEigenschaften().add(seg);
 
@@ -222,11 +220,11 @@ public class ReportProblemCommand implements ICommandPlugin, IPlugin {
     @Override
     public CommandResponse help() {
         String title = "Command reportProblem";
-        String message = "This command reports a problem to a previous task.";
-        message += "\n - 'stepId' defines the task where the problem is noticed..";
-        message += "\n - 'errorMessage' defines the message for the error.";
-        message += "\n - 'destinationStepName' defines the name (not the ID) of the destination for the report.";
-        return new CommandResponse(200, title, message);
+        StringBuilder message = new StringBuilder("This command reports a problem to a previous task.");
+        message.append("\n - 'stepId' defines the task where the problem is noticed..");
+        message.append("\n - 'errorMessage' defines the message for the error.");
+        message.append("\n - 'destinationStepName' defines the name (not the ID) of the destination for the report.");
+        return new CommandResponse(200, title, message.toString());
     }
 
     @Override
