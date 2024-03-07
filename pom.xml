@@ -7,7 +7,7 @@
     <relativePath />
   </parent>
   <groupId>io.goobi.workflow.plugin</groupId>
-  <artifactId>plugin-command-intranda-default</artifactId>
+  <artifactId>plugin-command-intranda</artifactId>
   <packaging>pom</packaging>
   <modules>
     <module>module-base</module>
