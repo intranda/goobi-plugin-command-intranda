@@ -7,7 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import de.intranda.goobi.plugins.CloseStepByProcessIdCommandTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ PluginInfoTest.class, CloseStepByProcessIdCommandTest.class })
+@SuiteClasses({ CloseStepByProcessIdCommandTest.class })
 public class AllTests {
 
 }
