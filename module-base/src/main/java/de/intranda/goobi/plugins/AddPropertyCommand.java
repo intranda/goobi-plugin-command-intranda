@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -98,7 +98,7 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
     public CommandResponse execute() {
         boolean overwriteExistingProperty = false;
 
-        if (parameterMap.get("overwriteExistingProperty") != null && parameterMap.get("overwriteExistingProperty").equalsIgnoreCase("true")) {
+        if (parameterMap.get("overwriteExistingProperty") != null && "true".equalsIgnoreCase(parameterMap.get("overwriteExistingProperty"))) {
             overwriteExistingProperty = true;
         }
 
@@ -147,7 +147,7 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
         }
         if (!propertyExistsAlready) {
             Processproperty pe = new Processproperty();
-            pe.setContainer(0);
+            pe.setContainer("0");
             pe.setTitel(propertyName);
             pe.setWert(propertyValue);
             pe.setProzess(process);
@@ -169,14 +169,14 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
     @Override
     public CommandResponse help() {
         String title = "Command AddProperty";
-        String message = "This command creates a property for processes.";
-        message += "\n - 'processId' is mandatory. 'processId' defines the id of the process.";
-        message += "\n - 'property' is mandatory. 'property' defines the name of the property.";
-        message += "\n -  'value' is mandatory. The value defines the value of the property.";
-        message +=
-                "\n -  'overwriteExistingProperty' is optional. The value defines if the value of an existing property with the same name gets overwritten or if a new one gets created.";
+        StringBuilder message = new StringBuilder("This command creates a property for processes.");
+        message.append("\n - 'processId' is mandatory. 'processId' defines the id of the process.");
+        message.append("\n - 'property' is mandatory. 'property' defines the name of the property.");
+        message.append("\n -  'value' is mandatory. The value defines the value of the property.");
+        message.append(
+                "\n -  'overwriteExistingProperty' is optional. The value defines if the value of an existing property with the same name gets overwritten or if a new one gets created.");
 
-        return new CommandResponse(200, title, message);
+        return new CommandResponse(200, title, message.toString());
 
     }
 
