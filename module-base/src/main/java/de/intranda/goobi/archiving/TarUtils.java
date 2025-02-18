@@ -3,7 +3,7 @@ package de.intranda.goobi.archiving;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -127,30 +127,26 @@ public class TarUtils {
         if (file.isFile()) {
 
             FileInputStream fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
+            try (BufferedInputStream bis = new BufferedInputStream(fis)) {
 
-            TarArchiveEntry entry = new TarArchiveEntry(file, path);
-            //			ArchiveEntry entry = tos.createArchiveEntry(file, path);
-            tos.putArchiveEntry(entry);
-            int size;
-            byte[] buffer = new byte[2048];
-            while ((size = bis.read(buffer, 0, buffer.length)) != -1) {
-                tos.write(buffer, 0, size);
-                if (checksum != null && size > 0) {
-                    checksum.update(buffer, 0, size);
+                TarArchiveEntry entry = new TarArchiveEntry(file, path);
+                tos.putArchiveEntry(entry);
+                int size;
+                byte[] buffer = new byte[2048];
+                while ((size = bis.read(buffer, 0, buffer.length)) != -1) {
+                    tos.write(buffer, 0, size);
+                    if (checksum != null && size > 0) {
+                        checksum.update(buffer, 0, size);
+                    }
                 }
-            }
 
-            if (tos != null) {
                 tos.closeArchiveEntry();
-            }
-            if (bis != null) {
-                bis.close();
+
             }
         } else if (file.isDirectory()) {
-            ArchiveEntry dirEntry = tos.createArchiveEntry(file, path + File.separator);
+            TarArchiveEntry dirEntry = tos.createArchiveEntry(file, path + File.separator);
             tos.putArchiveEntry(dirEntry);
-            if (tos != null && dirEntry != null) {
+            if (dirEntry != null) {
                 tos.closeArchiveEntry();
             }
             File[] subfiles = file.listFiles();
@@ -172,7 +168,7 @@ public class TarUtils {
      * @throws IOException
      */
     public static ArrayList<File> untarFile(File source, File destDir) throws IOException {
-        ArrayList<File> fileList = new ArrayList<File>();
+        ArrayList<File> fileList = new ArrayList<>();
 
         if (!destDir.isDirectory()) {
             destDir.mkdirs();
