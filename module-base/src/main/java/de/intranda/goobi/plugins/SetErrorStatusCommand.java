@@ -28,8 +28,8 @@ package de.intranda.goobi.plugins;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.goobi.beans.Step;
 import org.goobi.production.cli.CommandResponse;
