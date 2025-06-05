@@ -30,10 +30,8 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
+import org.goobi.beans.GoobiProperty;
 import org.goobi.beans.Process;
 import org.goobi.beans.Processproperty;
 import org.goobi.production.cli.CommandResponse;
@@ -43,6 +41,8 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
@@ -136,8 +136,8 @@ public class AddPropertyCommand implements ICommandPlugin, IPlugin {
 
         boolean propertyExistsAlready = false;
         if (overwriteExistingProperty) {
-            List<Processproperty> propertyList = process.getEigenschaften();
-            for (Processproperty property : propertyList) {
+            List<GoobiProperty> propertyList = process.getProperties();
+            for (GoobiProperty property : propertyList) {
                 if (property.getTitel().equalsIgnoreCase(propertyName)) {
                     propertyExistsAlready = true;
                     property.setWert(propertyValue);
