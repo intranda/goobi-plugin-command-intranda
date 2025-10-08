@@ -3,7 +3,7 @@ package de.intranda.goobi.plugins;
 /**
  * This file is part of a plugin for the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
- * Visit the websites for more information. 
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
@@ -28,9 +28,6 @@ package de.intranda.goobi.plugins;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.goobi.beans.Process;
 import org.goobi.beans.Step;
@@ -44,6 +41,8 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.persistence.managers.ProcessManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
@@ -117,14 +116,14 @@ public class DeleteProcessCommand implements ICommandPlugin, IPlugin {
                 WebDav myDav = new WebDav();
                 for (User b : step.getBenutzerList()) {
                     try {
-                        myDav.UploadFromHome(b, p);
+                        myDav.uploadFromHome(b, p);
                     } catch (RuntimeException e) {
                     }
                 }
                 for (Usergroup bg : step.getBenutzergruppenList()) {
                     for (User b : bg.getBenutzer()) {
                         try {
-                            myDav.UploadFromHome(b, p);
+                            myDav.uploadFromHome(b, p);
                         } catch (RuntimeException e) {
                         }
                     }
